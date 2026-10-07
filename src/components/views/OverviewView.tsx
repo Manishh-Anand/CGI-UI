@@ -45,6 +45,7 @@ export const OverviewView: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <section className="hero-panel relative overflow-hidden rounded-[2rem] p-7 sm:p-10"><div className="hero-orbit hero-orbit-one" /><div className="hero-orbit hero-orbit-two" /><div className="relative z-10 max-w-3xl"><div className="eyebrow"><Sparkles className="h-3.5 w-3.5" /> EXECUTIVE SIGNAL DESK</div><h1 className="display-heading mt-5">See the move before it becomes the <em>moment.</em></h1><p className="hero-copy mt-5 max-w-2xl">One premium workspace for the client signals, market moves, workflows, solutions, and technology decisions that matter now.</p><div className="mt-7 flex flex-wrap gap-3"><button className="button-primary" onClick={() => openAiSearch(DEMO_AI_SEEDED_QUERY)}>Ask the Gateway <ArrowUpRight className="h-4 w-4" /></button><button className="button-ghost" onClick={() => navigateTo('client-intelligence')}>Prioritize clients</button></div></div><div className="hero-stat-cluster"><div><strong>{totalClients}</strong><span>Client accounts</span></div><div><strong>{highRiskClients.length}</strong><span>High-risk signals</span></div><div><strong>{avgHealth}</strong><span>Avg. health</span></div></div></section>
       {/* Editorial Welcome Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
         <div>

@@ -329,7 +329,7 @@ export const ClientIntelligenceView: React.FC = () => {
                   </td>
                   <td className="py-2.5 px-3 whitespace-nowrap">
                     <div className="flex flex-wrap gap-1 max-w-xs">
-                      {client.services.map(svc => (
+                      {client.services.slice(0, 2).map(svc => (
                         <span
                           key={svc}
                           className="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-700"
@@ -337,6 +337,7 @@ export const ClientIntelligenceView: React.FC = () => {
                           {svc}
                         </span>
                       ))}
+                      {client.services.length > 2 && <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-bold text-blue-800">+{client.services.length - 2} more</span>}
                     </div>
                   </td>
                   <td className="py-2.5 px-3 tabular-nums font-semibold text-slate-900 whitespace-nowrap">
