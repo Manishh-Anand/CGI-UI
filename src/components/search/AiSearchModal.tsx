@@ -67,6 +67,20 @@ export const AiSearchModal: React.FC = () => {
     setTimeout(() => {
       const lower = queryText.toLowerCase();
 
+      if (lower.includes('high-risk') || lower.includes('high risk')) {
+        const highRiskClients = INITIAL_CLIENTS.filter(client => client.churnRisk === 'High');
+        setActiveResult({
+          query: queryText,
+          summary: `${highRiskClients.length} client accounts are currently flagged high risk. Open the client view to inspect their service concentration and next-best actions.`,
+          evidenceClients: highRiskClients,
+          sources: [{ title: 'Client Health Signals', dataset: 'Consilio Client Master Index', lastUpdated: '08 Oct 2026' }],
+          followUpQuestions: ['Which high-risk clients are single-service?', 'Show the revenue trend for high-risk accounts.'],
+          contextualActions: [{ label: 'Open High-Risk Clients', targetView: 'client-intelligence' }]
+        });
+        setIsSearching(false);
+        return;
+      }
+
       // Check if it matches our demo seeded query
       if (
         lower.includes('declining revenue') ||
@@ -253,10 +267,10 @@ export const AiSearchModal: React.FC = () => {
           />
           <button className="button-ghost !p-2 !rounded-full" title="Use browser microphone (mock flow)" onClick={() => {
             const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-            if (!SpeechRecognition) { setSearchQuery('Show high-risk clients'); return; }
+            if (!SpeechRecognition) { setSearchQuery('Show high-risk clients'); executeSearch('Show high-risk clients'); return; }
             const recognition = new SpeechRecognition();
             recognition.lang = 'en-US';
-            recognition.onresult = (event: any) => setSearchQuery(event.results[0][0].transcript);
+            recognition.onresult = (event: any) => { const transcript = event.results[0][0].transcript; setSearchQuery(transcript); executeSearch(transcript); };
             recognition.start();
           }}><Mic className="h-3.5 w-3.5" /></button>
           {searchQuery && (
@@ -294,7 +308,7 @@ export const AiSearchModal: React.FC = () => {
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
-                {area}
+                {area === 'Competitors' ? 'Market' : area === 'Tools' ? 'Solution 360' : area}
               </button>
             )
           )}

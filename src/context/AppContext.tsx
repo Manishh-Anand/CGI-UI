@@ -91,7 +91,12 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activeView, setActiveView] = useState<ActiveView>('about');
+  const readInitialView = (): ActiveView => {
+    const raw = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+    const allowed: ActiveView[] = ['about', 'overview', 'client-intelligence', 'client-detail', 'competitor-intelligence', 'competitor-detail', 'workflow-roles', 'role-detail', 'tools-intelligence', 'tool-detail', 'technology-intelligence', 'learning', 'assessments', 'contributor-portal', 'admin-approvals'];
+    return allowed.includes(raw as ActiveView) ? raw as ActiveView : 'about';
+  };
+  const [activeView, setActiveView] = useState<ActiveView>(readInitialView);
   // Default to Management so evaluator can explore all features immediately, but can toggle freely
   const [activeRole, setActiveRoleState] = useState<UserRole>('Management');
   
@@ -159,6 +164,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  useEffect(() => {
+    window.history.replaceState(null, '', `#/${activeView}`);
+  }, [activeView]);
 
   const navigateTo: AppContextType['navigateTo'] = (view, params) => {
     setActiveView(view);
