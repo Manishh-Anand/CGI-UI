@@ -122,6 +122,8 @@ export const AssessmentsView: React.FC = () => {
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm"><span className="mr-2 self-center text-[10px] font-bold uppercase tracking-wider text-slate-400">Question map</span>{ASSESSMENT_QUESTIONS.map((item, index) => { const answer = answersHistory.find(entry => entry.questionId === item.id); return <button key={item.id} onClick={() => { setCurrentQuestionIndex(index); setSelectedOption(answer?.selected ?? null); setIsAnswerSubmitted(Boolean(answer)); }} className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold transition ${index === currentQuestionIndex ? 'bg-blue-950 text-white' : answer?.correct ? 'bg-emerald-50 text-emerald-800' : answer ? 'bg-rose-50 text-rose-800' : 'bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-900'}`}>{index + 1}</button>; })}</div>
+
       {/* Main Question Card */}
       <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-2xs space-y-6">
         <div>
@@ -239,6 +241,7 @@ export const AssessmentsView: React.FC = () => {
           </div>
         )}
       </div>
+      {isCompleted && <div className="midnight-panel p-6"><div className="section-kicker section-kicker-light">Recommended next move</div><h2 className="mt-2 text-2xl font-semibold text-white">Turn misses into <em>momentum.</em></h2><p className="mt-2 max-w-2xl text-sm leading-6 text-white/65">Review the topics you missed, then continue in Atlas with targeted learning before you retake the assessment.</p><div className="mt-5 flex flex-wrap gap-2"><button className="button-light" onClick={() => window.open('https://atlas.consilio.com', '_blank', 'noopener,noreferrer')}>Open recommended Atlas learning <ArrowRight className="h-3.5 w-3.5" /></button><button className="button-ghost !border-white/40 !text-white" onClick={handleRestart}>Retake assessment</button></div></div>}
     </div>
   );
 };

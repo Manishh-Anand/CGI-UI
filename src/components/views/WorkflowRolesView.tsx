@@ -32,6 +32,7 @@ export const WorkflowRolesView: React.FC = () => {
     selectedWorkflowStageId || 'stage-5'
   );
   const [activeTab, setActiveTab] = useState<'workflow' | 'roles' | 'raci'>('workflow');
+  const [activeLayer, setActiveLayer] = useState<'System' | 'Business' | 'Application' | 'Data'>('System');
 
   const currentStage =
     workflowStages.find(s => s.id === activeStageId) || workflowStages[0];
@@ -68,7 +69,8 @@ export const WorkflowRolesView: React.FC = () => {
         ['Business', 'How value moves', Briefcase],
         ['Application', 'Where work happens', Wrench],
         ['Data', 'How signal flows', Layers]
-      ].map(([name, copy, Icon]) => { const LayerIcon = Icon as React.ElementType; return <button key={name as string} className="premium-card group p-4 text-left transition hover:-translate-y-1 hover:border-blue-200" onClick={() => setActiveTab('workflow')}><span className="icon-badge"><LayerIcon className="h-4 w-4" /></span><div className="mt-4 text-sm font-semibold text-slate-950">{name as string}</div><div className="mt-1 text-xs text-slate-500">{copy as string}</div><div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-blue-900 opacity-0 transition group-hover:opacity-100">Explore layer →</div></button>; })}</div>
+      ].map(([name, copy, Icon]) => { const LayerIcon = Icon as React.ElementType; const isActive = activeLayer === name; return <button key={name as string} className={`premium-card group p-4 text-left transition hover:-translate-y-1 hover:border-blue-200 ${isActive ? 'border-blue-400 bg-blue-50/40 ring-1 ring-blue-200' : ''}`} onClick={() => { setActiveLayer(name as typeof activeLayer); setActiveTab('workflow'); }}><span className="icon-badge"><LayerIcon className="h-4 w-4" /></span><div className="mt-4 text-sm font-semibold text-slate-950">{name as string}</div><div className="mt-1 text-xs text-slate-500">{copy as string}</div><div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-blue-900 transition">{isActive ? 'Layer expanded · inspect below' : 'Explore layer →'}</div></button>; })}</div>
+      <div className="premium-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"><div><div className="section-kicker">Active layer</div><div className="mt-2 text-lg font-semibold text-slate-950">{activeLayer} workflow</div><p className="mt-1 text-xs leading-5 text-slate-500">The six delivery stages below are the current eDiscovery subflow. Select a stage to inspect the internal work, owners, tools, and handoffs.</p></div><div className="flex flex-wrap gap-2"><span className="tag tag-blue">6 stages</span><span className="tag bg-slate-100 text-slate-600">RACI linked</span><span className="tag bg-slate-100 text-slate-600">Data lineage ready</span></div></div>
 
       {/* Top View Selector Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200 text-xs font-medium">
