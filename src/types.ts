@@ -44,6 +44,23 @@ export interface CompanyLeader {
   evidence: DataEvidence;
 }
 
+export interface UnifiedWorkflowNode {
+  id: string;
+  label: string;
+  description: string;
+  metric: string;
+  owner: string;
+  tools: string[];
+  subflowStages: string[];
+}
+
+export interface UnifiedWorkflowLayer {
+  id: 'system' | 'business' | 'application' | 'data';
+  name: string;
+  summary: string;
+  nodes: UnifiedWorkflowNode[];
+}
+
 export type ClientStatus = 'Active' | 'Watch' | 'Attention' | 'Growth';
 export type ChurnRisk = 'Low' | 'Medium' | 'High';
 

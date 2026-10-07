@@ -15,15 +15,18 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CompetitorRecord } from '../../types';
-import { FilterBar, FilterChip, HelpButton } from '../ui/PageChrome';
+import { BrandMark, FilterBar, FilterChip, HelpButton } from '../ui/PageChrome';
+import { DataTableTools } from '../ui/DataTableTools';
 
 export const CompetitorIntelligenceView: React.FC = () => {
   const { competitors, navigateTo, openAiSearch, activeRole } = useApp();
 
   const [selectedCompetitorId, setSelectedCompetitorId] = useState<string>('relativity');
+  const [sortDescending, setSortDescending] = useState(true);
 
   const activeCompetitor =
     competitors.find(c => c.id === selectedCompetitorId) || competitors[0];
+  const sortedCompetitors = [...competitors].sort((a, b) => sortDescending ? b.marketSharePct - a.marketSharePct : a.marketSharePct - b.marketSharePct);
 
   return (
     <div className="space-y-6">
@@ -54,7 +57,7 @@ export const CompetitorIntelligenceView: React.FC = () => {
 
       {/* Competitor Selector Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {competitors.map(comp => (
+        {sortedCompetitors.map(comp => (
           <div
             key={comp.id}
             onClick={() => setSelectedCompetitorId(comp.id)}
@@ -65,8 +68,8 @@ export const CompetitorIntelligenceView: React.FC = () => {
             }`}
           >
             <div>
-              <div className="flex items-center justify-between pb-1">
-                <span className="font-bold text-sm text-slate-900">{comp.name}</span>
+              <div className="flex items-center justify-between pb-1 gap-2">
+                <div className="flex items-center gap-2"><BrandMark name={comp.name} tone={comp.id === 'relativity' ? 'blue' : 'ink'} /><span className="font-bold text-sm text-slate-900">{comp.name}</span></div>
                 <span className="text-[11px] font-semibold text-slate-600">
                   {comp.marketSharePct}% Share
                 </span>
@@ -118,7 +121,7 @@ export const CompetitorIntelligenceView: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto border border-slate-200 rounded-lg">
-          <table className="w-full text-left border-collapse text-xs">
+          <DataTableTools count={competitors.length} sortLabel="Market share" sortDirection={sortDescending ? 'desc' : 'asc'} onSort={() => setSortDescending(value => !value)} /><table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-semibold text-slate-600">
                 <th className="py-2.5 px-3.5">Operational Capability</th>

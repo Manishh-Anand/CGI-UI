@@ -12,6 +12,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { DataTableTools } from '../ui/DataTableTools';
 
 export const CompetitorDetailView: React.FC = () => {
   const { selectedCompetitorId, competitors, navigateTo, activeRole, openAiSearch } = useApp();
@@ -24,6 +25,8 @@ export const CompetitorDetailView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'battlecard' | 'capabilities' | 'swot' | 'pricing'>(
     'battlecard'
   );
+  const [capabilityQuery, setCapabilityQuery] = useState('');
+  const visibleCapabilities = competitor.capabilities.filter(item => item.capability.toLowerCase().includes(capabilityQuery.toLowerCase()));
 
   return (
     <div className="space-y-6">
@@ -165,7 +168,7 @@ export const CompetitorDetailView: React.FC = () => {
             Head-to-Head Capability Scores
           </h3>
           <div className="overflow-x-auto border border-slate-200 rounded-lg">
-            <table className="w-full text-left border-collapse text-xs">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-100 bg-slate-50/70 p-3"><input value={capabilityQuery} onChange={event => setCapabilityQuery(event.target.value)} placeholder="Filter capabilities…" className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs outline-none focus:border-blue-800" /><DataTableTools count={visibleCapabilities.length} sortLabel="Capability" /></div><table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 font-semibold text-slate-600 text-[11px]">
                   <th className="p-3">Capability</th>
@@ -175,7 +178,7 @@ export const CompetitorDetailView: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {competitor.capabilities.map((c, i) => (
+                {visibleCapabilities.map((c, i) => (
                   <tr key={i} className="hover:bg-slate-50">
                     <td className="p-3 font-semibold text-slate-900">{c.capability}</td>
                     <td className="p-3">{c.consilioRating}</td>

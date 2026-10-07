@@ -10,7 +10,8 @@ import {
   ContributorSubmission,
   AiSearchResult,
   CompanyTimelineItem,
-  CompanyLeader
+  CompanyLeader,
+  UnifiedWorkflowLayer
 } from '../types';
 
 export const SYNTHETIC_DATA_DISCLAIMER = "Notice: All client names, financial figures, metrics, and case statistics in this prototype are synthetic demo records designed for operational prototyping.";
@@ -40,6 +41,25 @@ export const CONSILIO_TIMELINE: CompanyTimelineItem[] = [
   { year: '2021–22', title: 'Complete Enterprise', summary: 'Added Special Counsel legal consulting/eDiscovery units and Legility, then launched Complete Enterprise after integration.', capability: 'Enterprise legal services', evidence: CONSILIO_EVIDENCE('Consilio About', 'https://www.consilio.com/about') },
   { year: '2023', title: 'Global legal operations', summary: 'Completed the acquisition of Lawyers On Demand and SYKE to expand flexible talent and legal technology consulting.', capability: 'Talent & advisory', evidence: CONSILIO_EVIDENCE('Consilio LOD & SYKE', 'https://www.consilio.com/resource/consilio-announces-intent-to-acquire-lawyers-on-demand-and-syke-to-bolster-legal-flexible-talent-and-advisory-capabilities?889d8e38_page=9') },
   { year: '2025', title: 'AI narrative intelligence', summary: 'Completed the acquisition of TrueLaw, adding narrative AI, investigation tooling, contradiction detection, and legal language model expertise.', capability: 'Legal AI', evidence: CONSILIO_EVIDENCE('Consilio TrueLaw acquisition', 'https://www.consilio.com/resource/consilio-acquires-truelaw-strengthening-position-as-worlds-largest-legal-data-ai-technology-provider') }
+];
+
+export const UNIFIED_WORKFLOW_LAYERS: UnifiedWorkflowLayer[] = [
+  { id: 'system', name: 'System workflow', summary: 'How a matter moves from signal to defensible work product.', nodes: [
+    { id: 'intake', label: 'Intake & scope', description: 'Qualify the matter, custodians, jurisdictions, and outcome.', metric: '24h target', owner: 'Matter Lead', tools: ['Complete Data', 'Atlas'], subflowStages: ['Identification & Preservation'] },
+    { id: 'delivery', label: 'Discover to deliver', description: 'Move evidence through collection, processing, review, and production.', metric: '6 stages', owner: 'Delivery Director', tools: ['Sightline', 'RelativityOne'], subflowStages: ['Forensic Collection', 'Ingestion & Processing', 'Analysis & ECA', 'Managed Review', 'Production'] }
+  ] },
+  { id: 'business', name: 'Business workflow', summary: 'Where value, revenue, risk, and client decisions move.', nodes: [
+    { id: 'opportunity', label: 'Opportunity signal', description: 'Identify whitespace, renewal risk, and next-best service actions.', metric: '$8.2M whitespace', owner: 'Account Executive', tools: ['Gateway', 'Client CRM'], subflowStages: ['Account Health', 'QBR', 'Cross-sell'] },
+    { id: 'value', label: 'Value realization', description: 'Connect matter outcomes to margin, retention, and client proof.', metric: '3.4× stickiness', owner: 'Practice Leader', tools: ['Finance Ledger', 'QBR Workspace'], subflowStages: ['Delivery KPI', 'Outcome Review', 'Renewal'] }
+  ] },
+  { id: 'application', name: 'Application workflow', summary: 'The applications that orchestrate each handoff and decision.', nodes: [
+    { id: 'capture', label: 'Capture & stage', description: 'Connect enterprise sources and stage evidence in controlled workspaces.', metric: '18 connectors', owner: 'Data Operations', tools: ['Complete Data', 'Nuix', 'Cellebrite'], subflowStages: ['Forensic Collection', 'Ingestion & Processing'] },
+    { id: 'review', label: 'Review & decide', description: 'Surface relevance, privilege, and production decisions with auditability.', metric: '84% adoption', owner: 'Review Lead', tools: ['Sightline', 'Brainspace'], subflowStages: ['Analysis & ECA', 'Managed Review', 'Production'] }
+  ] },
+  { id: 'data', name: 'Data workflow', summary: 'How evidence is preserved, transformed, governed, and returned.', nodes: [
+    { id: 'lineage', label: 'Preserve & transform', description: 'Maintain chain of custody, hashes, metadata, and processing lineage.', metric: 'SHA-256 verified', owner: 'Forensics Specialist', tools: ['EnCase', 'Nuix'], subflowStages: ['Identification & Preservation', 'Forensic Collection', 'Ingestion & Processing'] },
+    { id: 'insight', label: 'Analyze & produce', description: 'Turn governed evidence into defensible insight and production-ready output.', metric: '3 audit gates', owner: 'QC Lead', tools: ['Sightline', 'RelativityOne'], subflowStages: ['Analysis & ECA', 'Managed Review', 'Production'] }
+  ] }
 ];
 
 export const INITIAL_CLIENTS: ClientRecord[] = [

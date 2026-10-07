@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 import { useApp, ActiveView } from '../../context/AppContext';
 import { UserRole } from '../../types';
+import consilioLogo from '../../images/consilio_logo.png';
+import { Freshness } from '../ui/PageChrome';
 
 export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
@@ -151,7 +153,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         {/* Brand Lockup */}
         <div className={`h-16 ${isSidebarCollapsed ? 'px-3 justify-center' : 'px-5'} flex items-center justify-between border-b border-slate-200`}>
           <div className="flex items-center gap-2.5">
-            <img src="/src/images/consilio_logo.png" alt="Consilio" className="h-8 w-8 rounded-lg object-contain" />
+            <img src={consilioLogo} alt="Consilio" className="h-8 w-8 rounded-lg object-contain" />
             {!isSidebarCollapsed && <div>
               <div className="text-slate-900 font-bold text-sm tracking-tight flex items-center gap-1.5">
                 Consilio Gateway
@@ -457,6 +459,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 </React.Fragment>
               ))}
             </nav>
+            <div className="hidden xl:block"><Freshness label="Workspace synced just now" /></div>
           </div>
 
           {/* Center Zone: Global Intelligence Search Trigger */}

@@ -16,7 +16,9 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { WorkflowStage, RoleRecord } from '../../types';
+import { UNIFIED_WORKFLOW_LAYERS } from '../../data/mockData';
 import { HelpButton } from '../ui/PageChrome';
+import { DataTableTools } from '../ui/DataTableTools';
 
 export const WorkflowRolesView: React.FC = () => {
   const {
@@ -71,6 +73,7 @@ export const WorkflowRolesView: React.FC = () => {
         ['Data', 'How signal flows', Layers]
       ].map(([name, copy, Icon]) => { const LayerIcon = Icon as React.ElementType; const isActive = activeLayer === name; return <button key={name as string} className={`premium-card group p-4 text-left transition hover:-translate-y-1 hover:border-blue-200 ${isActive ? 'border-blue-400 bg-blue-50/40 ring-1 ring-blue-200' : ''}`} onClick={() => { setActiveLayer(name as typeof activeLayer); setActiveTab('workflow'); }}><span className="icon-badge"><LayerIcon className="h-4 w-4" /></span><div className="mt-4 text-sm font-semibold text-slate-950">{name as string}</div><div className="mt-1 text-xs text-slate-500">{copy as string}</div><div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-blue-900 transition">{isActive ? 'Layer expanded · inspect below' : 'Explore layer →'}</div></button>; })}</div>
       <div className="premium-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"><div><div className="section-kicker">Active layer</div><div className="mt-2 text-lg font-semibold text-slate-950">{activeLayer} workflow</div><p className="mt-1 text-xs leading-5 text-slate-500">The six delivery stages below are the current eDiscovery subflow. Select a stage to inspect the internal work, owners, tools, and handoffs.</p></div><div className="flex flex-wrap gap-2"><span className="tag tag-blue">6 stages</span><span className="tag bg-slate-100 text-slate-600">RACI linked</span><span className="tag bg-slate-100 text-slate-600">Data lineage ready</span></div></div>
+      <div className="grid gap-4 lg:grid-cols-2">{UNIFIED_WORKFLOW_LAYERS.find(layer => layer.name.startsWith(activeLayer))?.nodes.map(node => <article key={node.id} className="premium-card group p-5 transition hover:-translate-y-1 hover:border-blue-200"><div className="flex items-start justify-between gap-3"><div><span className="tag tag-blue">{node.metric}</span><h3 className="mt-4 text-base font-semibold text-slate-950">{node.label}</h3></div><ArrowRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-1 group-hover:text-blue-900" /></div><p className="mt-2 text-sm leading-6 text-slate-600">{node.description}</p><div className="mt-4 flex flex-wrap gap-1.5">{node.tools.map(tool => <span className="tag bg-slate-100 text-slate-600" key={tool}>{tool}</span>)}</div><div className="mt-4 border-t border-slate-100 pt-3"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Owner · {node.owner}</div><div className="mt-2 flex flex-wrap gap-1.5">{node.subflowStages.map(stage => <span className="text-[11px] font-semibold text-blue-900" key={stage}>{stage}</span>)}</div></div></article>)}</div>
 
       {/* Top View Selector Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200 text-xs font-medium">
@@ -431,7 +434,7 @@ export const WorkflowRolesView: React.FC = () => {
           </div>
 
           <div className="overflow-x-auto border border-slate-200 rounded-lg">
-            <table className="w-full text-left border-collapse text-xs">
+            <DataTableTools count={roles.length} sortLabel="Role" onSort={() => setActiveTab('roles')} /><table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-semibold text-slate-600">
                   <th className="p-3">e-Discovery Stage</th>

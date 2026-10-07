@@ -18,7 +18,9 @@ import {
 import { useApp } from '../../context/AppContext';
 import { ClientRecord } from '../../types';
 import { DEMO_AI_SEEDED_QUERY } from '../../data/mockData';
-import { FilterBar, FilterChip, Freshness, HelpButton } from '../ui/PageChrome';
+import { BrandMark, FilterBar, FilterChip, Freshness, HelpButton } from '../ui/PageChrome';
+import { clientRisk } from '../../lib/intelligence';
+import { DataTableTools } from '../ui/DataTableTools';
 
 export const ClientIntelligenceView: React.FC = () => {
   const { clients, activeRole, navigateTo, openAiSearch, globalFilters } = useApp();
@@ -99,10 +101,10 @@ export const ClientIntelligenceView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
           <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">
-            Intelligence Area 01
+            Intelligence Area 01 · Clients
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-            Client Intelligence & Account Health
+            Clients <span className="font-serif italic font-normal text-blue-950">· Account health</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
             Portfolio visibility, revenue trajectories, service cross-sell opportunities, and churn
@@ -110,13 +112,13 @@ export const ClientIntelligenceView: React.FC = () => {
           </p>
         </div>
 
-        <button
+        <div className="flex items-center gap-2"><HelpButton title="How to read Clients" body="Start with the risk signal beside each client, then use the filters and table sort controls to prioritize revenue, health, services, or growth." /><button
           onClick={() => openAiSearch(DEMO_AI_SEEDED_QUERY)}
           className="px-3.5 py-2 bg-blue-50 border border-blue-200 hover:bg-blue-100/90 text-blue-900 rounded-lg text-xs font-medium flex items-center gap-2 transition-all shadow-2xs self-start sm:self-auto"
         >
           <Sparkles className="w-3.5 h-3.5 text-blue-600" />
           <span>Ask AI: Single-Service Churn Risks</span>
-        </button>
+        </button></div>
       </div>
 
       {/* KPI Cards */}
@@ -249,7 +251,7 @@ export const ClientIntelligenceView: React.FC = () => {
         </div>
 
         {/* Data Table */}
-        <div className="overflow-x-auto border border-slate-200 rounded-lg">
+        <div className="overflow-x-auto border border-slate-200 rounded-lg bg-white"><DataTableTools count={sortedClients.length} sortLabel={sortBy === 'revenue' ? 'Revenue' : sortBy === 'growth' ? 'Growth' : sortBy === 'health' ? 'Health' : 'Name'} sortDirection={sortDirection} onSort={() => toggleSort(sortBy)} /><div>
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-semibold text-slate-600">
@@ -297,7 +299,7 @@ export const ClientIntelligenceView: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
-              {sortedClients.map(client => (
+              {sortedClients.map(client => { const risk = clientRisk(client); return (
                 <tr
                   key={client.id}
                   className="hover:bg-slate-50/70 transition-colors group cursor-pointer"
@@ -305,8 +307,9 @@ export const ClientIntelligenceView: React.FC = () => {
                 >
                   <td className="py-2.5 px-3.5 font-bold text-slate-900 whitespace-nowrap">
                     <div className="flex items-center gap-2">
+                      <BrandMark name={client.name} tone="ink" />
                       <span>{client.name}</span>
-                      <span title={`${client.churnRisk} churn risk`} className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-bold ${client.churnRisk === 'High' ? 'border-rose-200 bg-rose-50 text-rose-700' : client.churnRisk === 'Medium' ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}><span className="h-1.5 w-1.5 rounded-full bg-current" />{client.churnRisk}</span>
+                      <span title={`${risk.risk} churn risk: ${risk.reasons.join(', ') || 'No elevated signals'}`} className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-bold ${risk.risk === 'High' ? 'border-rose-200 bg-rose-50 text-rose-700' : risk.risk === 'Medium' ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}><span className="h-1.5 w-1.5 rounded-full bg-current" />{risk.risk}</span>
                       {client.services.length === 1 && (
                         <span className="text-[10px] px-1 py-0.2 rounded bg-amber-100 text-amber-800 font-normal">
                           1 Service
@@ -394,9 +397,9 @@ export const ClientIntelligenceView: React.FC = () => {
                     </button>
                   </td>
                 </tr>
-              ))}
+              ); })}
             </tbody>
-          </table>
+          </table></div>
         </div>
 
         <div className="pt-2 flex items-center justify-between text-[11px] text-slate-500">
