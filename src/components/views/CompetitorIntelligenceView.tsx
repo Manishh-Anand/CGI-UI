@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CompetitorRecord } from '../../types';
+import { FilterBar, FilterChip, HelpButton } from '../ui/PageChrome';
 
 export const CompetitorIntelligenceView: React.FC = () => {
   const { competitors, navigateTo, openAiSearch, activeRole } = useApp();
@@ -30,25 +31,26 @@ export const CompetitorIntelligenceView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
           <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">
-            Intelligence Area 02
+            Intelligence Area 02 · Market Intelligence
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-            Competitor Intelligence & Market Positioning
+            Market Intelligence <span className="font-serif italic font-normal text-blue-950">· Positioning</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
-            Real-time market share tracking, capability comparison matrices, competitor product
-            releases, and RFP battlecards against major e-discovery rivals.
+            The market landscape, capability gaps, share signals, and strategic moves that shape Consilio’s next decision.
           </p>
         </div>
 
-        <button
+        <div className="flex items-center gap-2"><HelpButton title="How to read Market Intelligence" body="Use the competitor directory to compare market position, capability gaps, and recent moves. Every share figure needs an explicit denominator and source." /><button
           onClick={() => openAiSearch('Which competitors launched AI products recently?')}
           className="px-3.5 py-2 bg-blue-50 border border-blue-200 hover:bg-blue-100/90 text-blue-900 rounded-lg text-xs font-medium flex items-center gap-2 transition-all shadow-2xs self-start sm:self-auto"
         >
           <Sparkles className="w-3.5 h-3.5 text-blue-600" />
           <span>Ask AI: Competitor AI Launches</span>
-        </button>
+        </button></div>
       </div>
+
+      <FilterBar label="Market filters" count={competitors.length}><FilterChip active>All competitors</FilterChip><FilterChip>Market leaders</FilterChip><FilterChip>Challengers</FilterChip><FilterChip>Specialists</FilterChip></FilterBar>
 
       {/* Competitor Selector Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">

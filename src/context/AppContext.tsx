@@ -23,6 +23,7 @@ import {
 } from '../data/mockData';
 
 export type ActiveView =
+  | 'about'
   | 'overview'
   | 'client-intelligence'
   | 'client-detail'
@@ -51,6 +52,10 @@ interface AppContextType {
   aiSearchInitialQuery: string;
   isMobileNavOpen: boolean;
   setIsMobileNavOpen: (open: boolean) => void;
+  isSidebarCollapsed: boolean;
+  setIsSidebarCollapsed: (collapsed: boolean) => void;
+  isAgentDrawerOpen: boolean;
+  setIsAgentDrawerOpen: (open: boolean) => void;
   clients: ClientRecord[];
   competitors: CompetitorRecord[];
   tools: InternalToolRecord[];
@@ -86,7 +91,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [activeView, setActiveView] = useState<ActiveView>('overview');
+  const [activeView, setActiveView] = useState<ActiveView>('about');
   // Default to Management so evaluator can explore all features immediately, but can toggle freely
   const [activeRole, setActiveRoleState] = useState<UserRole>('Management');
   
@@ -99,6 +104,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isAiSearchOpen, setIsAiSearchOpen] = useState(false);
   const [aiSearchInitialQuery, setAiSearchInitialQuery] = useState('');
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isAgentDrawerOpen, setIsAgentDrawerOpen] = useState(false);
 
   const [globalFilters, setGlobalFilters] = useState<GlobalFilterState>({
     region: 'All',
@@ -191,6 +198,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const openAiSearch = (query?: string) => {
     setAiSearchInitialQuery(query || '');
     setIsAiSearchOpen(true);
+    setIsAgentDrawerOpen(true);
   };
 
   const closeAiSearch = () => {
@@ -233,6 +241,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         aiSearchInitialQuery,
         isMobileNavOpen,
         setIsMobileNavOpen,
+        isSidebarCollapsed,
+        setIsSidebarCollapsed,
+        isAgentDrawerOpen,
+        setIsAgentDrawerOpen,
         clients,
         competitors,
         tools,

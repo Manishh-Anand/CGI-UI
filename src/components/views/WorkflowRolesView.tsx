@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { WorkflowStage, RoleRecord } from '../../types';
+import { HelpButton } from '../ui/PageChrome';
 
 export const WorkflowRolesView: React.FC = () => {
   const {
@@ -41,18 +42,17 @@ export const WorkflowRolesView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
           <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">
-            Intelligence Area 03
+            Intelligence Area 03 · Unified Workflows
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-            Team, Workflow & Roles Intelligence
+            Unified workflow <span className="font-serif italic font-normal text-blue-950">· the operating model</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
-            Interactive e-Discovery Reference Model (EDRM) lifecycle, role-to-stage RACI
-            mappings, input/output data lineage, and team capacity benchmarks.
+            See how work moves through the system, the money chain, applications, and data — then expand into stages, roles, tools, and controls.
           </p>
         </div>
 
-        <button
+        <div className="flex items-center gap-2"><HelpButton title="How to read Workflows" body="Start with a layer of the operating model, then select a stage to inspect ownership, inputs, outputs, tools, and bottlenecks." /><button
           onClick={() =>
             openAiSearch('How does review fit into the e-Discovery workflow?')
           }
@@ -60,8 +60,15 @@ export const WorkflowRolesView: React.FC = () => {
         >
           <Sparkles className="w-3.5 h-3.5 text-blue-600" />
           <span>Ask AI: Review Workflow Fit</span>
-        </button>
+        </button></div>
       </div>
+
+      <div className="grid gap-3 md:grid-cols-4">{[
+        ['System', 'How work gets done', Workflow],
+        ['Business', 'How value moves', Briefcase],
+        ['Application', 'Where work happens', Wrench],
+        ['Data', 'How signal flows', Layers]
+      ].map(([name, copy, Icon]) => { const LayerIcon = Icon as React.ElementType; return <button key={name as string} className="premium-card group p-4 text-left transition hover:-translate-y-1 hover:border-blue-200" onClick={() => setActiveTab('workflow')}><span className="icon-badge"><LayerIcon className="h-4 w-4" /></span><div className="mt-4 text-sm font-semibold text-slate-950">{name as string}</div><div className="mt-1 text-xs text-slate-500">{copy as string}</div><div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-blue-900 opacity-0 transition group-hover:opacity-100">Explore layer →</div></button>; })}</div>
 
       {/* Top View Selector Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200 text-xs font-medium">

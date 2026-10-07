@@ -8,10 +8,39 @@ import {
   LearningModule,
   AssessmentQuestion,
   ContributorSubmission,
-  AiSearchResult
+  AiSearchResult,
+  CompanyTimelineItem,
+  CompanyLeader
 } from '../types';
 
 export const SYNTHETIC_DATA_DISCLAIMER = "Notice: All client names, financial figures, metrics, and case statistics in this prototype are synthetic demo records designed for operational prototyping.";
+
+const CONSILIO_EVIDENCE = (sourceName: string, sourceUrl: string): { sourceName: string; sourceUrl: string; retrievedAt: string; freshnessState: 'Fresh'; confidence: 'High'; } => ({
+  sourceName,
+  sourceUrl,
+  retrievedAt: '2026-10-08',
+  freshnessState: 'Fresh',
+  confidence: 'High'
+});
+
+export const CONSILIO_LEADERSHIP: CompanyLeader = {
+  name: 'Andy Macdonald',
+  title: 'Chief Executive Officer',
+  biography: 'Andy Macdonald leads Consilio’s strategic and operational initiatives, with more than 20 years of executive experience across technology-enabled services and business building.',
+  highlights: ['Former First Advantage President & CEO', 'Growth and integration leadership', 'Based in Washington, D.C.'],
+  evidence: CONSILIO_EVIDENCE('Consilio Executive Management', 'https://www.consilio.com/about-consilio/executive-management')
+};
+
+export const CONSILIO_TIMELINE: CompanyTimelineItem[] = [
+  { year: '2000', title: 'The foundation', summary: 'Founded as First Advantage Litigation Consulting to help multinational clients manage electronically stored information.', capability: 'Forensics & consulting', evidence: CONSILIO_EVIDENCE('Consilio About', 'https://www.consilio.com/about') },
+  { year: '2005', title: 'Global RPM launches', summary: 'Expanded into web-based review technology, secure hosting, and multilingual data processing.', capability: 'Review technology', evidence: CONSILIO_EVIDENCE('Consilio About', 'https://www.consilio.com/about') },
+  { year: '2013', title: 'Consilio is born', summary: 'First Advantage Litigation Consulting rebranded to Consilio.', capability: 'Brand & platform', evidence: CONSILIO_EVIDENCE('Consilio About', 'https://www.consilio.com/about') },
+  { year: '2015', title: 'Sightline era', summary: 'Separated from First Advantage, added Backstop, Proven Legal Technologies, Huron Legal, and EQD, and launched a new Sightline iteration.', capability: 'Technology & services', evidence: CONSILIO_EVIDENCE('Consilio About', 'https://www.consilio.com/about') },
+  { year: '2018', title: 'Scale through combination', summary: 'Merged with Advanced Discovery and acquired DiscoverReady, expanding global reach and complementary client capabilities.', capability: 'Global eDiscovery', evidence: CONSILIO_EVIDENCE('Consilio Advanced Discovery', 'https://www.consilio.com/en-gb/resource/consilio-and-advanced-discovery-join-forces-to-form-global-ediscovery-and-risk-management-market-leader?889d8e38_page=10') },
+  { year: '2021–22', title: 'Complete Enterprise', summary: 'Added Special Counsel legal consulting/eDiscovery units and Legility, then launched Complete Enterprise after integration.', capability: 'Enterprise legal services', evidence: CONSILIO_EVIDENCE('Consilio About', 'https://www.consilio.com/about') },
+  { year: '2023', title: 'Global legal operations', summary: 'Completed the acquisition of Lawyers On Demand and SYKE to expand flexible talent and legal technology consulting.', capability: 'Talent & advisory', evidence: CONSILIO_EVIDENCE('Consilio LOD & SYKE', 'https://www.consilio.com/resource/consilio-announces-intent-to-acquire-lawyers-on-demand-and-syke-to-bolster-legal-flexible-talent-and-advisory-capabilities?889d8e38_page=9') },
+  { year: '2025', title: 'AI narrative intelligence', summary: 'Completed the acquisition of TrueLaw, adding narrative AI, investigation tooling, contradiction detection, and legal language model expertise.', capability: 'Legal AI', evidence: CONSILIO_EVIDENCE('Consilio TrueLaw acquisition', 'https://www.consilio.com/resource/consilio-acquires-truelaw-strengthening-position-as-worlds-largest-legal-data-ai-technology-provider') }
+];
 
 export const INITIAL_CLIENTS: ClientRecord[] = [
   {

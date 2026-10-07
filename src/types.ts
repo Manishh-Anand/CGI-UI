@@ -2,6 +2,20 @@ export type UserRole = 'New Joiner' | 'Employee' | 'Contributor' | 'Admin' | 'Ma
 
 export type IntelligenceArea = 'Clients' | 'Competitors' | 'Workflow' | 'Tools' | 'Technology';
 
+export type Priority = 'P0' | 'P1' | 'P2' | 'P3';
+export type FreshnessState = 'Fresh' | 'Aging' | 'Stale' | 'Unknown';
+
+export interface DataEvidence {
+  sourceName: string;
+  sourceUrl?: string;
+  retrievedAt: string;
+  lastUpdatedAt?: string;
+  freshnessState: FreshnessState;
+  confidence: 'High' | 'Medium' | 'Low' | 'Unverified';
+  comparisonBasis?: string;
+  notes?: string;
+}
+
 export type RegionFilter = 'All' | 'North America' | 'EMEA' | 'APAC';
 export type DepartmentFilter = 'All' | 'Legal Solutions' | 'Forensics' | 'Managed Services' | 'Data Operations';
 export type DateRangeFilter = 'LTM' | 'YTD' | 'Q3 2026' | 'Q2 2026';
@@ -11,6 +25,23 @@ export interface GlobalFilterState {
   department: DepartmentFilter;
   dateRange: DateRangeFilter;
   savedViewName?: string;
+}
+
+export interface CompanyTimelineItem {
+  year: string;
+  title: string;
+  summary: string;
+  capability: string;
+  evidence: DataEvidence;
+}
+
+export interface CompanyLeader {
+  name: string;
+  title: string;
+  biography: string;
+  highlights: string[];
+  portraitUrl?: string;
+  evidence: DataEvidence;
 }
 
 export type ClientStatus = 'Active' | 'Watch' | 'Attention' | 'Growth';
@@ -54,6 +85,7 @@ export interface ClientRecord {
   clientSince: string;
   quarterlyRevenue: { quarter: string; revenue: number }[];
   reviews: ClientReview[];
+  evidence?: DataEvidence;
 }
 
 export interface CompetitorCapability {
@@ -83,6 +115,7 @@ export interface CompetitorRecord {
     opportunities: string[];
     threats: string[];
   };
+  evidence?: DataEvidence;
 }
 
 export interface WorkflowStage {
@@ -133,6 +166,7 @@ export interface InternalToolRecord {
   licenseModel: string;
   systemStatus: 'Operational' | 'Scheduled Maintenance' | 'Degraded';
   recentReleases: { version: string; date: string; note: string }[];
+  evidence?: DataEvidence;
 }
 
 export type RadarRing = 'Adopt' | 'Trial' | 'Assess' | 'Hold';
@@ -147,6 +181,7 @@ export interface TechRadarItem {
   marketAdoptionPct: number;
   impactOnRoles: string;
   regulatoryConsiderations: string;
+  evidence?: DataEvidence;
 }
 
 export interface LearningModule {

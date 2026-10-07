@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ASSESSMENT_QUESTIONS } from '../../data/mockData';
+import { HelpButton } from '../ui/PageChrome';
 
 export const AssessmentsView: React.FC = () => {
   const { navigateTo, openAiSearch } = useApp();
@@ -79,14 +80,16 @@ export const AssessmentsView: React.FC = () => {
           </p>
         </div>
 
-        <button
+        <div className="flex items-center gap-2"><HelpButton title="How assessments work" body="Use the numbered navigator to move between questions, submit each response, and review explanations. Your final score highlights the Atlas topics to revisit." /><button
           onClick={handleRestart}
           className="text-xs text-slate-600 hover:text-slate-900 flex items-center gap-1.5 self-start sm:self-auto py-1 px-2 rounded hover:bg-slate-100"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Reset Assessment</span>
-        </button>
+        </button></div>
       </div>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4"><Metric label="Questions" value={`${ASSESSMENT_QUESTIONS.length}`} /><Metric label="Categories" value={`${new Set(ASSESSMENT_QUESTIONS.map(item => item.area)).size}`} /><Metric label="Answered" value={`${answersHistory.length}`} /><Metric label="Current accuracy" value={`${answersHistory.length ? Math.round((scoreCount / answersHistory.length) * 100) : 0}%`} /></div>
 
       {/* Progress Bar & Score Counter */}
       <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between text-xs">
@@ -239,3 +242,5 @@ export const AssessmentsView: React.FC = () => {
     </div>
   );
 };
+
+const Metric: React.FC<{ label: string; value: string }> = ({ label, value }) => <div className="premium-card p-4"><div className="text-2xl font-semibold text-slate-950">{value}</div><div className="mt-1 text-xs font-semibold text-slate-600">{label}</div></div>;

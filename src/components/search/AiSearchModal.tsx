@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   Database,
   Info
+  ,Mic
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { IntelligenceArea, AiSearchResult, ClientRecord } from '../../types';
@@ -232,8 +233,8 @@ export const AiSearchModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-10 sm:pt-16 p-4 bg-slate-950/70 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-150">
-      <div className="bg-white rounded-xl shadow-2xl border border-slate-200/90 w-full max-w-3xl overflow-hidden flex flex-col my-auto max-h-[90vh]">
+    <div className="chat-drawer overflow-hidden">
+      <div className="bg-white/60 w-full h-full overflow-hidden flex flex-col">
         {/* Header Search Input */}
         <div className="p-4 border-b border-slate-200 bg-slate-50/70 flex items-center gap-3">
           <Search className="w-5 h-5 text-slate-500 shrink-0" />
@@ -250,6 +251,14 @@ export const AiSearchModal: React.FC = () => {
             autoFocus
             className="flex-1 bg-transparent border-none text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden font-medium"
           />
+          <button className="button-ghost !p-2 !rounded-full" title="Use browser microphone (mock flow)" onClick={() => {
+            const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+            if (!SpeechRecognition) { setSearchQuery('Show high-risk clients'); return; }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.onresult = (event: any) => setSearchQuery(event.results[0][0].transcript);
+            recognition.start();
+          }}><Mic className="h-3.5 w-3.5" /></button>
           {searchQuery && (
             <button
               onClick={() => {

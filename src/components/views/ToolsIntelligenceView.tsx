@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { InternalToolRecord } from '../../types';
+import { FilterBar, FilterChip, Freshness, HelpButton } from '../ui/PageChrome';
 
 export const ToolsIntelligenceView: React.FC = () => {
   const { tools, selectedToolId, navigateTo, openAiSearch } = useApp();
@@ -39,25 +40,33 @@ export const ToolsIntelligenceView: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
           <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-1">
-            Intelligence Area 04
+            Intelligence Area 04 · Solution 360
           </div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-            Internal Tools & Technology Ecosystem
+            Solution 360 <span className="font-serif italic font-normal text-blue-950">· Product Atlas</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl">
-            Plain-language software profiles, tool-to-stage mappings, fleet adoption metrics, and
-            direct Atlas documentation guides.
+            A concise map of the products, capabilities, adoption signals, and workflows that power Consilio.
           </p>
         </div>
 
-        <button
+        <div className="flex items-center gap-2"><HelpButton title="How to read Product Atlas" body="Filter the catalog first, then select a product to inspect its adoption, workflow coverage, owners, and Atlas documentation." /><button
           onClick={() => openAiSearch('What tools are used during review?')}
           className="px-3.5 py-2 bg-blue-50 border border-blue-200 hover:bg-blue-100/90 text-blue-900 rounded-lg text-xs font-medium flex items-center gap-2 transition-all shadow-2xs self-start sm:self-auto"
         >
           <Sparkles className="w-3.5 h-3.5 text-blue-600" />
           <span>Ask AI: Tools Used During Review</span>
-        </button>
+        </button></div>
       </div>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{[
+        ['Solutions mapped', tools.length, 'Across the operating model'],
+        ['Avg. adoption', `${Math.round(tools.reduce((sum, tool) => sum + tool.adoptionRatePct, 0) / Math.max(tools.length, 1))}%`, 'Fleet adoption signal'],
+        ['Operational', tools.filter(tool => tool.systemStatus === 'Operational').length, 'Systems in good standing'],
+        ['Atlas pathways', tools.reduce((sum, tool) => sum + tool.workflowStages.length, 0), 'Workflow connections']
+      ].map(([label, value, note]) => <div className="premium-card p-4" key={label as string}><div className="text-2xl font-semibold text-slate-950">{value as string}</div><div className="mt-1 text-xs font-semibold text-slate-700">{label as string}</div><div className="mt-1 text-[11px] text-slate-500">{note as string}</div></div>)}</div>
+
+      <FilterBar label="Product Atlas filters" count={filteredTools.length} onReset={() => setSearchQuery('')}><FilterChip active={!searchQuery} onClick={() => setSearchQuery('')}>All products</FilterChip><FilterChip onClick={() => setSearchQuery('review')}>Review</FilterChip><FilterChip onClick={() => setSearchQuery('processing')}>Processing</FilterChip><FilterChip onClick={() => setSearchQuery('forensics')}>Forensics</FilterChip><Freshness label="Catalog updated today" /></FilterBar>
 
       {/* Main Two-Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -24,6 +24,7 @@ import {
   Info,
   Check,
   Clock
+  ,PanelLeftClose, PanelLeftOpen
 } from 'lucide-react';
 import { useApp, ActiveView } from '../../context/AppContext';
 import { UserRole } from '../../types';
@@ -46,6 +47,10 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     unreadNotificationCount,
     markNotificationsAsRead,
     contributorSubmissions
+    ,isSidebarCollapsed,
+    setIsSidebarCollapsed,
+    isAgentDrawerOpen,
+    setIsAgentDrawerOpen
   } = useApp();
 
   const [isIntelligenceOpen, setIsIntelligenceOpen] = useState(
@@ -90,6 +95,8 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
   const getBreadcrumbs = () => {
     switch (activeView) {
+      case 'about':
+        return ['Consilio Gateway', 'About Consilio'];
       case 'overview':
         return ['Workspace', 'Overview'];
       case 'client-intelligence':
@@ -97,7 +104,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       case 'client-detail':
         return ['Intelligence', 'Client Intelligence', 'Account Profile'];
       case 'competitor-intelligence':
-        return ['Intelligence', 'Competitor Intelligence'];
+        return ['Intelligence', 'Market Intelligence'];
       case 'competitor-detail':
         return ['Intelligence', 'Competitor Intelligence', 'Battlecard'];
       case 'workflow-roles':
@@ -105,7 +112,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       case 'role-detail':
         return ['Intelligence', 'Team, Workflow & Roles', 'Role Profile'];
       case 'tools-intelligence':
-        return ['Intelligence', 'Internal Tools & Tech'];
+        return ['Intelligence', 'Solution 360 · Product Atlas'];
       case 'tool-detail':
         return ['Intelligence', 'Internal Tools & Tech', 'Tool Profile'];
       case 'technology-intelligence':
@@ -137,23 +144,20 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
       {/* Left Navigation Sidebar */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-50 h-screen w-68 bg-white text-slate-700 border-r border-slate-200 flex flex-col transition-transform duration-200 ease-in-out shrink-0 ${
+        className={`fixed md:sticky top-0 left-0 z-50 h-screen ${isSidebarCollapsed ? 'md:w-[84px]' : 'md:w-68'} w-72 bg-white text-slate-700 border-r border-slate-200 flex flex-col transition-all duration-300 ease-out shrink-0 ${
           isMobileNavOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         {/* Brand Lockup */}
-        <div className="h-16 px-5 flex items-center justify-between border-b border-slate-200">
+        <div className={`h-16 ${isSidebarCollapsed ? 'px-3 justify-center' : 'px-5'} flex items-center justify-between border-b border-slate-200`}>
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded bg-blue-600 flex items-center justify-center text-white font-bold text-sm tracking-wider shadow-2xs">
-              C
-            </div>
-            <div>
+            <img src="/src/images/consilio_logo.png" alt="Consilio" className="h-8 w-8 rounded-lg object-contain" />
+            {!isSidebarCollapsed && <div>
               <div className="text-slate-900 font-bold text-sm tracking-tight flex items-center gap-1.5">
-                Consilio
-                <span className="text-[11px] font-normal text-slate-500">Gateway</span>
+                Consilio Gateway
               </div>
-              <div className="text-[10px] text-slate-400 tracking-tight">Enterprise Intelligence</div>
-            </div>
+              <div className="text-[10px] text-slate-400 tracking-tight">of Intelligence</div>
+            </div>}
           </div>
           <button
             onClick={() => setIsMobileNavOpen(false)}
@@ -161,16 +165,27 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
           >
             <X className="w-5 h-5" />
           </button>
+          <button onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="hidden md:flex rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-900" title={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+            {isSidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
         </div>
 
         {/* Navigation Links */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
+        <div className={`flex-1 overflow-y-auto ${isSidebarCollapsed ? 'px-2' : 'px-3'} py-4 space-y-6`}>
           {/* Main Workspace Navigation */}
           <div>
-            <div className="px-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
-              Workspace
-            </div>
+            {!isSidebarCollapsed && <div className="px-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Workspace</div>}
             <nav className="space-y-1">
+              <button
+                onClick={() => navigateTo('about')}
+                title="About Consilio"
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
+                  activeView === 'about' ? 'bg-blue-50 text-blue-700 font-semibold shadow-2xs' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+              >
+                <Sparkles className="w-4 h-4 shrink-0" />
+                {!isSidebarCollapsed && <span>About Consilio</span>}
+              </button>
               <button
                 onClick={() => navigateTo('overview')}
                 className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-xs font-medium transition-colors ${
@@ -180,7 +195,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4 shrink-0" />
-                <span>Overview</span>
+                {!isSidebarCollapsed && <span>Overview</span>}
               </button>
 
               {/* Intelligence Master Item with Submenu */}
@@ -200,7 +215,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 >
                   <div className="flex items-center gap-2.5">
                     <Layers className="w-4 h-4 shrink-0 text-blue-600" />
-                    <span>Intelligence</span>
+                    {!isSidebarCollapsed && <span>Intelligence</span>}
                   </div>
                   {isIntelligenceOpen ? (
                     <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
@@ -220,7 +235,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                       }`}
                     >
                       <Building2 className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">Client Intelligence</span>
+                        {!isSidebarCollapsed && <span className="truncate">Clients</span>}
                     </button>
 
                     <button
@@ -232,7 +247,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                       }`}
                     >
                       <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">Competitor Intelligence</span>
+                        {!isSidebarCollapsed && <span className="truncate">Market Intelligence</span>}
                     </button>
 
                     <button
@@ -244,7 +259,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                       }`}
                     >
                       <Workflow className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">Team, Workflow & Roles</span>
+                        {!isSidebarCollapsed && <span className="truncate">Workflows</span>}
                     </button>
 
                     <button
@@ -256,7 +271,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                       }`}
                     >
                       <Wrench className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">Internal Tools & Tech</span>
+                        {!isSidebarCollapsed && <span className="truncate">Solution 360</span>}
                     </button>
 
                     <button
@@ -268,7 +283,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                       }`}
                     >
                       <Cpu className="w-3.5 h-3.5 shrink-0" />
-                      <span className="truncate">Technology Intelligence</span>
+                        {!isSidebarCollapsed && <span className="truncate">Technology</span>}
                     </button>
                   </div>
                 )}
@@ -283,7 +298,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 }`}
               >
                 <GraduationCap className="w-4 h-4 shrink-0" />
-                <span>Learning</span>
+                {!isSidebarCollapsed && <span>Learning</span>}
               </button>
 
               <button
@@ -295,7 +310,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 }`}
               >
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
-                <span>Assessments</span>
+                {!isSidebarCollapsed && <span>Assessments</span>}
               </button>
             </nav>
           </div>
@@ -453,7 +468,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
               <div className="flex items-center gap-2.5 truncate">
                 <Search className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-colors shrink-0" />
                 <span className="truncate text-slate-500 group-hover:text-slate-700">
-                  Ask the Intelligence Gateway, clients, tools, workflows...
+                  Ask Consilio Gateway, clients, tools, workflows...
                 </span>
               </div>
               <div className="hidden lg:flex items-center gap-1">

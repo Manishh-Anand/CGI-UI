@@ -18,11 +18,14 @@ import { TechnologyRadarView } from './components/views/TechnologyRadarView';
 import { LearningView } from './components/views/LearningView';
 import { AssessmentsView } from './components/views/AssessmentsView';
 import { ContributorAdminView } from './components/views/ContributorAdminView';
+import { AboutConsilioView } from './components/views/AboutConsilioView';
 
 const MainViewRouter: React.FC = () => {
   const { activeView } = useApp();
 
   switch (activeView) {
+    case 'about':
+      return <AboutConsilioView />;
     case 'overview':
       return <OverviewView />;
     case 'client-intelligence':

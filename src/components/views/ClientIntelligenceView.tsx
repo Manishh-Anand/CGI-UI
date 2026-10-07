@@ -18,6 +18,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { ClientRecord } from '../../types';
 import { DEMO_AI_SEEDED_QUERY } from '../../data/mockData';
+import { FilterBar, FilterChip, Freshness, HelpButton } from '../ui/PageChrome';
 
 export const ClientIntelligenceView: React.FC = () => {
   const { clients, activeRole, navigateTo, openAiSearch, globalFilters } = useApp();
@@ -305,6 +306,7 @@ export const ClientIntelligenceView: React.FC = () => {
                   <td className="py-2.5 px-3.5 font-bold text-slate-900 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <span>{client.name}</span>
+                      <span title={`${client.churnRisk} churn risk`} className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-bold ${client.churnRisk === 'High' ? 'border-rose-200 bg-rose-50 text-rose-700' : client.churnRisk === 'Medium' ? 'border-amber-200 bg-amber-50 text-amber-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}><span className="h-1.5 w-1.5 rounded-full bg-current" />{client.churnRisk}</span>
                       {client.services.length === 1 && (
                         <span className="text-[10px] px-1 py-0.2 rounded bg-amber-100 text-amber-800 font-normal">
                           1 Service
