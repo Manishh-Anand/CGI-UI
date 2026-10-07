@@ -23,7 +23,7 @@ export const AboutConsilioView: React.FC = () => {
         <div className="hero-stat-cluster" aria-label="Company snapshot">
           <div><strong>2000</strong><span>Founded</span></div>
           <div><strong>25+</strong><span>Years of evolution</span></div>
-          <div><strong>08</strong><span>Milestones mapped</span></div>
+          <div><strong>{String(CONSILIO_TIMELINE.length).padStart(2, '0')}</strong><span>Milestones mapped</span></div>
         </div>
       </section>
 
@@ -43,10 +43,13 @@ export const AboutConsilioView: React.FC = () => {
           <div className="section-kicker">The Consilio story</div>
           <div className="mt-2 flex items-end justify-between gap-4"><div><h2 className="section-title">A timeline of <em>expansion.</em></h2><p className="mt-2 max-w-xl text-sm leading-6 text-muted">Key moments that shaped today’s technology, services, and global footprint.</p></div><span className="data-pill">Public source map</span></div>
           <div className="timeline mt-8">
-            {CONSILIO_TIMELINE.map((item, index) => <article className="timeline-item" key={item.year}>
+            {CONSILIO_TIMELINE.map((item, index) => <React.Fragment key={`${item.year}-${item.title}`}>
+              {(index === 0 || item.phase !== CONSILIO_TIMELINE[index - 1].phase) && <div className="timeline-phase"><span>{item.phase}</span><strong>{item.phase?.startsWith('Phase 1') ? 'Roots' : item.phase?.startsWith('Phase 2') ? 'Expansion' : 'Scale + AI'}</strong></div>}
+              <article className="timeline-item">
               <div className="timeline-marker">{String(index + 1).padStart(2, '0')}</div>
               <div className="timeline-content"><div className="flex flex-wrap items-center gap-2"><span className="timeline-year">{item.year}</span><span className="tag tag-blue">{item.capability}</span></div><h3 className="mt-2 text-base font-semibold text-ink">{item.title}</h3><p className="mt-1 text-sm leading-6 text-muted">{item.summary}</p><a className="source-link mt-3" href={item.evidence.sourceUrl} target="_blank" rel="noreferrer">{item.evidence.sourceName}<ExternalLink className="h-3 w-3" /></a></div>
-            </article>)}
+              </article>
+            </React.Fragment>)}
           </div>
         </div>
 

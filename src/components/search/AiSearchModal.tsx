@@ -45,6 +45,7 @@ export const AiSearchModal: React.FC = () => {
   const [activeResult, setActiveResult] = useState<AiSearchResult | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [voiceStatus, setVoiceStatus] = useState<'idle' | 'listening' | 'interpreting' | 'unsupported'>('idle');
+  const [voiceDestination, setVoiceDestination] = useState<{ label: string; view: any } | null>(null);
 
   useEffect(() => {
     if (isAiSearchOpen) {
@@ -54,6 +55,7 @@ export const AiSearchModal: React.FC = () => {
       } else {
         setSearchQuery('');
         setActiveResult(null);
+        setVoiceDestination(null);
       }
     }
   }, [isAiSearchOpen, aiSearchInitialQuery]);
@@ -266,12 +268,12 @@ export const AiSearchModal: React.FC = () => {
             autoFocus
             className="flex-1 bg-transparent border-none text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden font-medium"
           />
-          <button className="button-ghost !p-2 !rounded-full" title="Use browser microphone (mock flow)" onClick={() => {
+          <button className={`button-ghost !p-2 !rounded-full ${voiceStatus === 'listening' ? 'voice-pulse bg-blue-50 text-blue-700' : ''}`} title="Use browser microphone (mock flow)" onClick={() => {
             const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-            if (!SpeechRecognition) { setVoiceStatus('unsupported'); setSearchQuery('Show high-risk clients'); executeSearch('Show high-risk clients'); return; }
+            if (!SpeechRecognition) { setVoiceStatus('unsupported'); setVoiceDestination({ label: 'Open client intelligence', view: 'client-intelligence' }); setSearchQuery('Show high-risk clients'); executeSearch('Show high-risk clients'); return; }
             const recognition = new SpeechRecognition();
             recognition.lang = 'en-US';
-            setVoiceStatus('listening'); recognition.onerror = () => setVoiceStatus('idle'); recognition.onresult = (event: any) => { const transcript = event.results[0][0].transcript; const intent = transcript.toLowerCase(); setVoiceStatus('interpreting'); setSearchQuery(transcript); executeSearch(transcript); if (intent.includes('high risk')) navigateTo('client-intelligence'); else if (intent.includes('relativity') || intent.includes('competitor')) navigateTo('competitor-intelligence'); else if (intent.includes('workflow')) navigateTo('workflow-roles'); else if (intent.includes('tools') || intent.includes('review')) navigateTo('tools-intelligence'); };
+            setVoiceStatus('listening'); recognition.onerror = () => setVoiceStatus('idle'); recognition.onend = () => setVoiceStatus(current => current === 'listening' ? 'idle' : current); recognition.onresult = (event: any) => { const transcript = event.results[0][0].transcript; const intent = transcript.toLowerCase(); setVoiceStatus('interpreting'); setSearchQuery(transcript); executeSearch(transcript); if (intent.includes('high risk')) setVoiceDestination({ label: 'Open client intelligence', view: 'client-intelligence' }); else if (intent.includes('relativity') || intent.includes('competitor')) setVoiceDestination({ label: 'Open market intelligence', view: 'competitor-intelligence' }); else if (intent.includes('workflow')) setVoiceDestination({ label: 'Open workflow map', view: 'workflow-roles' }); else if (intent.includes('tools') || intent.includes('review')) setVoiceDestination({ label: 'Open Solution 360', view: 'tools-intelligence' }); };
             recognition.start();
           }}><Mic className="h-3.5 w-3.5" /></button>
           {searchQuery && (
@@ -328,7 +330,7 @@ export const AiSearchModal: React.FC = () => {
           {/* When no query executed yet: show guidelines and suggested queries */}
           {!isSearching && !activeResult && (
             <div className="space-y-5">
-              <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-4"><div className="flex items-center justify-between gap-2"><div className="text-xs font-bold text-blue-950">Voice command simulator</div><span className="text-[10px] font-semibold uppercase tracking-wider text-blue-700">{voiceStatus === 'listening' ? 'Listening…' : voiceStatus === 'interpreting' ? 'Interpreting…' : voiceStatus === 'unsupported' ? 'Mock fallback' : 'Ready'}</span></div><p className="mt-1 text-[11px] leading-5 text-blue-900/70">Try a predefined command or tap the microphone to use your browser’s speech recognition.</p><div className="mt-3 flex flex-wrap gap-2">{['Show high-risk clients', 'Compare Consilio with Relativity', 'Show the review workflow', 'Which tools support review?'].map(flow => <button key={flow} onClick={() => executeSearch(flow)} className="rounded-lg border border-blue-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-blue-900 hover:bg-blue-100">{flow}</button>)}</div></div>
+              <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-4"><div className="flex items-center justify-between gap-2"><div className="text-xs font-bold text-blue-950">Voice command simulator</div><span className="text-[10px] font-semibold uppercase tracking-wider text-blue-700">{voiceStatus === 'listening' ? 'Listening…' : voiceStatus === 'interpreting' ? 'Interpreting…' : voiceStatus === 'unsupported' ? 'Mock fallback' : 'Ready'}</span></div><div className={`voice-visualizer mt-4 ${voiceStatus === 'listening' ? 'is-listening' : ''}`}><span /><span /><span /><span /><span /><span /><span /></div><p className="mt-3 text-[11px] leading-5 text-blue-900/70">Try a predefined command or tap the microphone to use your browser’s speech recognition.</p><div className="mt-3 flex flex-wrap gap-2">{['Show high-risk clients', 'Compare Consilio with Relativity', 'Show the review workflow', 'Which tools support review?'].map(flow => <button key={flow} onClick={() => executeSearch(flow)} className="rounded-lg border border-blue-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-blue-900 hover:bg-blue-100">{flow}</button>)}</div></div>
               <div className="text-xs text-slate-600 leading-relaxed bg-blue-50/70 border border-blue-100/80 rounded-lg p-3.5 flex items-start gap-3">
                 <Sparkles className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                 <div>
@@ -382,6 +384,8 @@ export const AiSearchModal: React.FC = () => {
                   {activeResult.summary}
                 </p>
               </div>
+
+              {voiceDestination && <div className="flex items-center justify-between gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4"><div><div className="text-xs font-bold uppercase tracking-wider text-blue-800">Voice intent recognized</div><div className="mt-1 text-sm font-semibold text-blue-950">Your section is ready to open.</div></div><button className="button-primary !px-3 !py-2" onClick={() => { navigateTo(voiceDestination.view); setVoiceDestination(null); closeAiSearch(); }}>{voiceDestination.label}<ArrowRight className="h-4 w-4" /></button></div>}
 
               {/* 2. Structured Evidence Table / Cards */}
               {activeResult.evidenceClients && activeResult.evidenceClients.length > 0 && (

@@ -28,6 +28,7 @@ export interface GlobalFilterState {
 }
 
 export interface CompanyTimelineItem {
+  phase?: string;
   year: string;
   title: string;
   summary: string;

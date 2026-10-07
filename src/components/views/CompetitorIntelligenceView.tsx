@@ -23,10 +23,12 @@ export const CompetitorIntelligenceView: React.FC = () => {
 
   const [selectedCompetitorId, setSelectedCompetitorId] = useState<string>('relativity');
   const [sortDescending, setSortDescending] = useState(true);
+  const [marketFilter, setMarketFilter] = useState('All');
 
   const activeCompetitor =
     competitors.find(c => c.id === selectedCompetitorId) || competitors[0];
-  const sortedCompetitors = [...competitors].sort((a, b) => sortDescending ? b.marketSharePct - a.marketSharePct : a.marketSharePct - b.marketSharePct);
+  const filteredCompetitors = competitors.filter(comp => marketFilter === 'All' || comp.marketPosition === marketFilter);
+  const sortedCompetitors = [...filteredCompetitors].sort((a, b) => sortDescending ? b.marketSharePct - a.marketSharePct : a.marketSharePct - b.marketSharePct);
 
   return (
     <div className="space-y-6">
@@ -54,7 +56,10 @@ export const CompetitorIntelligenceView: React.FC = () => {
         </button></div>
       </div>
 
-      <FilterBar label="Market filters" count={competitors.length}><FilterChip active>All competitors</FilterChip><FilterChip>Market leaders</FilterChip><FilterChip>Challengers</FilterChip><FilterChip>Specialists</FilterChip></FilterBar>
+      <FilterBar label="Market filters" count={filteredCompetitors.length} onReset={() => setMarketFilter('All')}><FilterChip active={marketFilter === 'All'} onClick={() => setMarketFilter('All')}>All competitors</FilterChip>{['Market Leader', 'Challenger', 'Legacy Incumbent'].map(value => <FilterChip key={value} active={marketFilter === value} onClick={() => setMarketFilter(value)}>{value}</FilterChip>)}</FilterBar>
+
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><div className="premium-card p-6"><div className="text-xs font-bold uppercase tracking-wider text-slate-400">Tracked market</div><div className="mt-3 text-4xl font-semibold text-slate-950">{competitors.reduce((sum, item) => sum + item.marketSharePct, 0)}%</div><div className="mt-1 text-sm text-slate-500">share represented in the current model</div></div><div className="premium-card p-6"><div className="text-xs font-bold uppercase tracking-wider text-slate-400">Largest position</div><div className="mt-3 text-4xl font-semibold text-slate-950">{Math.max(...competitors.map(item => item.marketSharePct))}%</div><div className="mt-1 text-sm text-slate-500">top competitor share signal</div></div><div className="premium-card p-6"><div className="text-xs font-bold uppercase tracking-wider text-slate-400">Consilio edge</div><div className="mt-3 text-4xl font-semibold text-emerald-700">+{Math.round(competitors.reduce((sum, item) => sum + item.capabilityGapScore, 0) / Math.max(competitors.length, 1))}%</div><div className="mt-1 text-sm text-slate-500">average capability differential</div></div><div className="premium-card p-6"><div className="text-xs font-bold uppercase tracking-wider text-slate-400">Market signals</div><div className="mt-3 text-4xl font-semibold text-blue-900">{competitors.length}</div><div className="mt-1 text-sm text-slate-500">sources in the current radar</div></div></section>
+      <section className="premium-card p-6"><div className="flex items-end justify-between"><div><div className="section-kicker">Share signal</div><h2 className="mt-2 text-xl font-semibold text-slate-950">Market position at a glance</h2></div><span className="text-xs font-semibold text-slate-400">Public / synthetic benchmark</span></div><div className="mt-6 space-y-4">{sortedCompetitors.slice(0, 6).map(comp => <button key={comp.id} onClick={() => setSelectedCompetitorId(comp.id)} className="w-full text-left"><div className="mb-1 flex justify-between text-sm"><span className="font-semibold text-slate-800">{comp.name}</span><span className="font-bold text-blue-900">{comp.marketSharePct}%</span></div><div className="h-3 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-r from-blue-900 to-cyan-400 transition-all" style={{ width: `${Math.min(comp.marketSharePct * 3, 100)}%` }} /></div></button>)}</div></section>
 
       {/* Competitor Selector Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">

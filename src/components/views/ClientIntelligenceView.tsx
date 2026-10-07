@@ -40,6 +40,16 @@ export const ClientIntelligenceView: React.FC = () => {
       if (globalFilters.region !== 'All' && client.region !== globalFilters.region) {
         return false;
       }
+      if (globalFilters.department !== 'All') {
+        const departmentMatch = globalFilters.department === 'Legal Solutions'
+          ? client.services.some(service => ['Review', 'Processing'].includes(service))
+          : globalFilters.department === 'Forensics'
+            ? client.services.includes('Forensics')
+            : globalFilters.department === 'Managed Services'
+              ? client.services.some(service => ['Managed Services', 'Review'].includes(service))
+              : client.services.some(service => ['Processing', 'Data Operations'].includes(service));
+        if (!departmentMatch) return false;
+      }
       // Status filter
       if (selectedStatus !== 'All' && client.status !== selectedStatus) {
         return false;
@@ -253,7 +263,7 @@ export const ClientIntelligenceView: React.FC = () => {
 
         {/* Data Table */}
         <div className="overflow-x-auto border border-slate-200 rounded-lg bg-white"><DataTableTools count={sortedClients.length} sortLabel={sortBy === 'revenue' ? 'Revenue' : sortBy === 'growth' ? 'Growth' : sortBy === 'health' ? 'Health' : 'Name'} sortDirection={sortDirection} onSort={() => toggleSort(sortBy)} /><div>
-          <table className="w-full text-left border-collapse text-xs">
+          <table className="client-table min-w-[1180px] w-full text-left border-collapse text-sm">
             <thead>
               <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-semibold text-slate-600">
                 <th
