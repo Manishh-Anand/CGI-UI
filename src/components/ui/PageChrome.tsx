@@ -13,3 +13,10 @@ export const FilterBar: React.FC<{ label?: string; count?: number; onReset?: () 
 export const FilterChip: React.FC<{ active?: boolean; children: React.ReactNode; onClick?: () => void }> = ({ active, children, onClick }) => <button onClick={onClick} className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${active ? 'border-blue-900 bg-blue-900 text-white shadow-sm' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-900'}`}>{children}</button>;
 
 export const BrandMark: React.FC<{ name: string; tone?: 'blue' | 'ink' }> = ({ name, tone = 'blue' }) => <span aria-label={`${name} logo`} className={`inline-flex h-9 w-9 items-center justify-center rounded-xl text-[11px] font-extrabold tracking-tight ${tone === 'blue' ? 'bg-blue-950 text-white' : 'bg-slate-100 text-slate-800'}`}>{name.split(/\s+/).map(part => part[0]).join('').slice(0, 2).toUpperCase()}</span>;
+
+export const DataFreshnessBanner: React.FC<{ source?: string; age?: string; state?: 'Fresh' | 'Aging' | 'Stale' | 'Unknown' }> = ({ source = 'Consilio intelligence sources', age = 'Updated just now', state = 'Fresh' }) => {
+  const tone = state === 'Stale' ? 'border-amber-200 bg-amber-50 text-amber-900' : state === 'Aging' ? 'border-blue-100 bg-blue-50 text-blue-900' : 'border-emerald-100 bg-emerald-50 text-emerald-900';
+  return <div className={`flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3 py-2 text-[11px] ${tone}`}><span className="font-semibold">{state === 'Stale' ? 'Data may be stale' : state === 'Aging' ? 'Data is aging' : 'Fresh intelligence'} · {source}</span><span>{age}</span></div>;
+};
+
+export const ValidationBadge: React.FC<{ valid?: boolean; label?: string }> = ({ valid = true, label }) => <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${valid ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-rose-200 bg-rose-50 text-rose-800'}`}><span className="h-1.5 w-1.5 rounded-full bg-current" />{label || (valid ? 'Validated' : 'Needs review')}</span>;

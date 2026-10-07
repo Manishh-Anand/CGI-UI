@@ -44,6 +44,7 @@ export const AiSearchModal: React.FC = () => {
   const [selectedArea, setSelectedArea] = useState<'All' | IntelligenceArea>('All');
   const [activeResult, setActiveResult] = useState<AiSearchResult | null>(null);
   const [isSearching, setIsSearching] = useState(false);
+  const [voiceStatus, setVoiceStatus] = useState<'idle' | 'listening' | 'interpreting' | 'unsupported'>('idle');
 
   useEffect(() => {
     if (isAiSearchOpen) {
@@ -267,10 +268,10 @@ export const AiSearchModal: React.FC = () => {
           />
           <button className="button-ghost !p-2 !rounded-full" title="Use browser microphone (mock flow)" onClick={() => {
             const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-            if (!SpeechRecognition) { setSearchQuery('Show high-risk clients'); executeSearch('Show high-risk clients'); return; }
+            if (!SpeechRecognition) { setVoiceStatus('unsupported'); setSearchQuery('Show high-risk clients'); executeSearch('Show high-risk clients'); return; }
             const recognition = new SpeechRecognition();
             recognition.lang = 'en-US';
-            recognition.onresult = (event: any) => { const transcript = event.results[0][0].transcript; setSearchQuery(transcript); executeSearch(transcript); };
+            setVoiceStatus('listening'); recognition.onerror = () => setVoiceStatus('idle'); recognition.onresult = (event: any) => { const transcript = event.results[0][0].transcript; const intent = transcript.toLowerCase(); setVoiceStatus('interpreting'); setSearchQuery(transcript); executeSearch(transcript); if (intent.includes('high risk')) navigateTo('client-intelligence'); else if (intent.includes('relativity') || intent.includes('competitor')) navigateTo('competitor-intelligence'); else if (intent.includes('workflow')) navigateTo('workflow-roles'); else if (intent.includes('tools') || intent.includes('review')) navigateTo('tools-intelligence'); };
             recognition.start();
           }}><Mic className="h-3.5 w-3.5" /></button>
           {searchQuery && (
@@ -327,6 +328,7 @@ export const AiSearchModal: React.FC = () => {
           {/* When no query executed yet: show guidelines and suggested queries */}
           {!isSearching && !activeResult && (
             <div className="space-y-5">
+              <div className="rounded-xl border border-blue-100 bg-blue-50/60 p-4"><div className="flex items-center justify-between gap-2"><div className="text-xs font-bold text-blue-950">Voice command simulator</div><span className="text-[10px] font-semibold uppercase tracking-wider text-blue-700">{voiceStatus === 'listening' ? 'Listening…' : voiceStatus === 'interpreting' ? 'Interpreting…' : voiceStatus === 'unsupported' ? 'Mock fallback' : 'Ready'}</span></div><p className="mt-1 text-[11px] leading-5 text-blue-900/70">Try a predefined command or tap the microphone to use your browser’s speech recognition.</p><div className="mt-3 flex flex-wrap gap-2">{['Show high-risk clients', 'Compare Consilio with Relativity', 'Show the review workflow', 'Which tools support review?'].map(flow => <button key={flow} onClick={() => executeSearch(flow)} className="rounded-lg border border-blue-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-blue-900 hover:bg-blue-100">{flow}</button>)}</div></div>
               <div className="text-xs text-slate-600 leading-relaxed bg-blue-50/70 border border-blue-100/80 rounded-lg p-3.5 flex items-start gap-3">
                 <Sparkles className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                 <div>

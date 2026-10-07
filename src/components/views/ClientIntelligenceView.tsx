@@ -18,7 +18,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { ClientRecord } from '../../types';
 import { DEMO_AI_SEEDED_QUERY } from '../../data/mockData';
-import { BrandMark, FilterBar, FilterChip, Freshness, HelpButton } from '../ui/PageChrome';
+import { BrandMark, DataFreshnessBanner, FilterBar, FilterChip, Freshness, HelpButton } from '../ui/PageChrome';
 import { clientRisk } from '../../lib/intelligence';
 import { DataTableTools } from '../ui/DataTableTools';
 
@@ -97,6 +97,7 @@ export const ClientIntelligenceView: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <DataFreshnessBanner source="Client master index + service ledger" age="Updated 12 minutes ago" />
       {/* Header and Title */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
         <div>

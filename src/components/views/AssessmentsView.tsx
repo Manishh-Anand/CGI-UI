@@ -24,6 +24,9 @@ export const AssessmentsView: React.FC = () => {
   const [answersHistory, setAnswersHistory] = useState<
     { questionId: string; selected: number; correct: boolean }[]
   >([]);
+  const [attemptHistory, setAttemptHistory] = useState<{ date: string; score: number; total: number }[]>(() => {
+    try { return JSON.parse(localStorage.getItem('consilio-assessment-attempts') || '[]'); } catch { return []; }
+  });
 
   const question = ASSESSMENT_QUESTIONS[currentQuestionIndex];
 
@@ -41,6 +44,11 @@ export const AssessmentsView: React.FC = () => {
       ...prev,
       { questionId: question.id, selected: selectedOption, correct: isCorrect }
     ]);
+    if (currentQuestionIndex === ASSESSMENT_QUESTIONS.length - 1) {
+      const nextHistory = [{ date: new Date().toISOString(), score: scoreCount + (isCorrect ? 1 : 0), total: ASSESSMENT_QUESTIONS.length }, ...attemptHistory].slice(0, 10);
+      setAttemptHistory(nextHistory);
+      localStorage.setItem('consilio-assessment-attempts', JSON.stringify(nextHistory));
+    }
     setIsAnswerSubmitted(true);
   };
 
@@ -89,7 +97,7 @@ export const AssessmentsView: React.FC = () => {
         </button></div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4"><Metric label="Questions" value={`${ASSESSMENT_QUESTIONS.length}`} /><Metric label="Categories" value={`${new Set(ASSESSMENT_QUESTIONS.map(item => item.area)).size}`} /><Metric label="Answered" value={`${answersHistory.length}`} /><Metric label="Current accuracy" value={`${answersHistory.length ? Math.round((scoreCount / answersHistory.length) * 100) : 0}%`} /></div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5"><Metric label="Questions" value={`${ASSESSMENT_QUESTIONS.length}`} /><Metric label="Categories" value={`${new Set(ASSESSMENT_QUESTIONS.map(item => item.area)).size}`} /><Metric label="Answered" value={`${answersHistory.length}`} /><Metric label="Current accuracy" value={`${answersHistory.length ? Math.round((scoreCount / answersHistory.length) * 100) : 0}%`} /><Metric label="Saved attempts" value={`${attemptHistory.length}`} /></div>
 
       {/* Progress Bar & Score Counter */}
       <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs flex items-center justify-between text-xs">

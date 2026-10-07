@@ -3,7 +3,7 @@ import { ArrowUpRight, BarChart3, Cpu, ExternalLink, Sparkles, TrendingUp } from
 import { useApp } from '../../context/AppContext';
 import { TECH_RADAR_ITEMS } from '../../data/mockData';
 import { RadarRing } from '../../types';
-import { FilterBar, FilterChip, Freshness, HelpButton } from '../ui/PageChrome';
+import { DataFreshnessBanner, FilterBar, FilterChip, Freshness, HelpButton } from '../ui/PageChrome';
 
 export const TechnologyRadarView: React.FC = () => {
   const { openAiSearch } = useApp();
@@ -15,7 +15,7 @@ export const TechnologyRadarView: React.FC = () => {
   const filtered = useMemo(() => TECH_RADAR_ITEMS.filter(item => (ring === 'All' || item.ring === ring) && (category === 'All' || item.category === category) && (maturity === 'All' || item.consilioMaturity === maturity)), [ring, category, maturity]);
   const ringTone = (value: RadarRing) => value === 'Adopt' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : value === 'Trial' ? 'bg-blue-50 text-blue-800 border-blue-200' : value === 'Assess' ? 'bg-amber-50 text-amber-800 border-amber-200' : 'bg-rose-50 text-rose-800 border-rose-200';
 
-  return <div className="space-y-6">
+  return <div className="space-y-6"><DataFreshnessBanner source="Public market benchmark set" age="Updated today" />
     <div className="flex flex-col gap-4 border-b border-slate-200/70 pb-5 lg:flex-row lg:items-end lg:justify-between"><div><div className="eyebrow"><Cpu className="h-3.5 w-3.5" /> Intelligence 03</div><h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">Technology <span className="font-serif italic font-normal text-blue-950">position.</span></h1><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">A focused view of Consilio’s technology posture, market context, and the capability signals shaping modern eDiscovery.</p></div><div className="flex items-center gap-2"><HelpButton title="How to read Technology" body="Start with the market benchmark, then filter the capability map by maturity and ring. Open a signal for its operational impact and evidence." /><button className="button-ghost" onClick={() => openAiSearch('What technologies are currently in the Trial and Assess rings?')}><Sparkles className="h-3.5 w-3.5" /> Ask the Gateway</button></div></div>
 
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><Metric icon={BarChart3} label="Global eDiscovery benchmark" value="$14.8B" note="2025 public estimate" tone="blue" /><Metric icon={TrendingUp} label="North America share" value="39%" note="Regional benchmark" tone="green" /><Metric icon={Cpu} label="Signals mapped" value={`${TECH_RADAR_ITEMS.length}`} note="Across 4 maturity rings" tone="purple" /><Metric icon={Sparkles} label="Consilio vendor share" value="—" note="Not publicly disclosed" tone="slate" /></div>

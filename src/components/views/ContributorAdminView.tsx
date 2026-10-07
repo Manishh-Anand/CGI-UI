@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { IntelligenceArea } from '../../types';
-import { FilterBar, FilterChip, HelpButton, Freshness } from '../ui/PageChrome';
+import { DataFreshnessBanner, FilterBar, FilterChip, HelpButton, Freshness } from '../ui/PageChrome';
 
 export const ContributorAdminView: React.FC = () => {
   const {
@@ -57,7 +57,7 @@ export const ContributorAdminView: React.FC = () => {
   const resolvedSubmissions = visibleSubmissions.filter(s => s.status !== 'Pending Approval');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6"><DataFreshnessBanner source="Governance change queue" age="Updated 12 minutes ago" />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
         <div>

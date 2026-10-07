@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { InternalToolRecord } from '../../types';
-import { FilterBar, FilterChip, Freshness, HelpButton } from '../ui/PageChrome';
+import { DataFreshnessBanner, FilterBar, FilterChip, Freshness, HelpButton } from '../ui/PageChrome';
 
 export const ToolsIntelligenceView: React.FC = () => {
   const { tools, selectedToolId, navigateTo, openAiSearch } = useApp();
@@ -35,7 +35,7 @@ export const ToolsIntelligenceView: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6"><DataFreshnessBanner source="Solution and product catalog" age="Updated today" />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
         <div>

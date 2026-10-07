@@ -30,6 +30,7 @@ import { useApp, ActiveView } from '../../context/AppContext';
 import { UserRole } from '../../types';
 import consilioLogo from '../../images/consilio_logo.png';
 import { Freshness } from '../ui/PageChrome';
+import { FilterBar, FilterChip } from '../ui/PageChrome';
 
 export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const {
@@ -702,6 +703,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
         {/* Dynamic View Container */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+          <div className="mb-5"><FilterBar label="Global scope" count={(globalFilters.region !== 'All' ? 1 : 0) + (globalFilters.department !== 'All' ? 1 : 0) + (globalFilters.dateRange !== 'LTM' ? 1 : 0)} onReset={() => updateGlobalFilters({ region: 'All', department: 'All', dateRange: 'LTM' })}><FilterChip active={globalFilters.region === 'All'} onClick={() => updateGlobalFilters({ region: 'All' })}>All regions</FilterChip>{(['North America', 'EMEA', 'APAC'] as const).map(region => <FilterChip key={region} active={globalFilters.region === region} onClick={() => updateGlobalFilters({ region })}>{region}</FilterChip>)}<select value={globalFilters.department} onChange={event => updateGlobalFilters({ department: event.target.value as any })} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:border-blue-800"><option value="All">All practices</option><option value="Legal Solutions">Legal Solutions</option><option value="Forensics">Forensics</option><option value="Managed Services">Managed Services</option><option value="Data Operations">Data Operations</option></select><select value={globalFilters.dateRange} onChange={event => updateGlobalFilters({ dateRange: event.target.value as any })} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:border-blue-800"><option value="LTM">Last 12 months</option><option value="YTD">Year to date</option><option value="Q3 2026">Q3 2026</option><option value="Q2 2026">Q2 2026</option></select></FilterBar></div>
           {children}
         </main>
       </div>

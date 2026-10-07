@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CompetitorRecord } from '../../types';
-import { BrandMark, FilterBar, FilterChip, HelpButton } from '../ui/PageChrome';
+import { BrandMark, DataFreshnessBanner, FilterBar, FilterChip, HelpButton } from '../ui/PageChrome';
 import { DataTableTools } from '../ui/DataTableTools';
 
 export const CompetitorIntelligenceView: React.FC = () => {
@@ -30,6 +30,7 @@ export const CompetitorIntelligenceView: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <DataFreshnessBanner source="Market movement tracker" age="Updated 2 hours ago" />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
         <div>
