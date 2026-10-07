@@ -1,0 +1,6 @@
+{
+  "name": "Consilio Intelligence Gateway",
+  "description": "Enterprise intelligence platform for Consilio integrating client, competitor, workflow, internal tools, and technology intelligence with AI search.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
