@@ -39,7 +39,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     navigateTo,
     setActiveRole,
     globalFilters,
-    updateGlobalFilters,
+    updateGlobalFilters: updateGlobalFiltersState,
     savedViews,
     applySavedView,
     saveCurrentView,
@@ -70,6 +70,8 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [newViewName, setNewViewName] = useState('');
   const [showSaveViewInput, setShowSaveViewInput] = useState(false);
+  const [scopeNotice, setScopeNotice] = useState('');
+  const [roleNotice, setRoleNotice] = useState('');
 
   const filterRef = useRef<HTMLDivElement>(null);
   const roleRef = useRef<HTMLDivElement>(null);
@@ -95,6 +97,28 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const rolesList: UserRole[] = ['New Joiner', 'Employee', 'Contributor', 'Admin', 'Management'];
 
   const pendingApprovalsCount = contributorSubmissions.filter(s => s.status === 'Pending Approval').length;
+
+  const updateGlobalFilters = (nextFilters: Parameters<typeof updateGlobalFiltersState>[0]) => {
+    updateGlobalFiltersState(nextFilters);
+    const scope = [nextFilters.region, nextFilters.department, nextFilters.dateRange].filter(value => value && value !== 'All' && value !== 'LTM').join(' · ');
+    setScopeNotice(scope ? `Global scope applied: ${scope}` : 'Global scope reset to the full intelligence workspace');
+    window.setTimeout(() => setScopeNotice(''), 2600);
+  };
+
+  const handleRoleChange = (role: UserRole) => {
+    setActiveRole(role);
+    const destinations: Record<UserRole, { view: ActiveView; message: string }> = {
+      'New Joiner': { view: 'learning', message: 'New Joiner view enabled: learning paths and workflow guidance are now prioritized.' },
+      Employee: { view: 'overview', message: 'Employee view enabled: operational signals and balanced intelligence are now prioritized.' },
+      Contributor: { view: 'contributor-portal', message: 'Contributor view enabled: evidence-backed content submissions are now available.' },
+      Admin: { view: 'admin-approvals', message: 'Admin view enabled: governance approvals and queue actions are now available.' },
+      Management: { view: 'overview', message: 'Management view enabled: portfolio, revenue, concentration, and M&A signals are now prioritized.' }
+    };
+    setRoleNotice(destinations[role].message);
+    navigateTo(destinations[role].view);
+    window.setTimeout(() => setRoleNotice(''), 4200);
+    setIsRoleDropdownOpen(false);
+  };
 
   const getBreadcrumbs = () => {
     switch (activeView) {
@@ -154,12 +178,12 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         {/* Brand Lockup */}
         <div className={`h-[76px] ${isSidebarCollapsed ? 'px-2 justify-center' : 'px-5'} flex items-center justify-between border-b border-slate-200`}>
           <div className="flex items-center gap-2.5">
-            <img src={consilioLogo} alt="Consilio" className={`${isSidebarCollapsed ? 'h-9 w-9' : 'h-10 w-10'} rounded-lg object-contain`} />
+            <img src={consilioLogo} alt="Consilio" className={`${isSidebarCollapsed ? 'h-10 w-10' : 'h-12 w-12'} rounded-lg object-contain`} />
             {!isSidebarCollapsed && <div>
               <div className="brand-lockup text-slate-950 font-bold text-[15px] tracking-tight leading-tight">
                 Consilio Gateway
               </div>
-              <div className="text-[11px] text-blue-700 font-semibold tracking-tight">of Intelligence</div>
+              <div className="text-[11px] text-[#001749] font-semibold tracking-tight">of Intelligence</div>
             </div>}
           </div>
           <button
@@ -641,8 +665,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                     <button
                       key={r}
                       onClick={() => {
-                        setActiveRole(r);
-                        setIsRoleDropdownOpen(false);
+                        handleRoleChange(r);
                       }}
                       className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-slate-50 transition-colors ${
                         activeRole === r ? 'text-blue-600 font-semibold bg-blue-50/50' : 'text-slate-700'
@@ -706,6 +729,7 @@ export const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
         {/* Dynamic View Container */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+          {(scopeNotice || roleNotice) && <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-semibold text-blue-950 shadow-sm"><span>{roleNotice || scopeNotice}</span><button className="text-xs font-bold text-blue-700 hover:text-blue-950" onClick={() => { setScopeNotice(''); setRoleNotice(''); }}>Dismiss</button></div>}
           <div className="mb-5"><FilterBar label="Global scope" count={(globalFilters.region !== 'All' ? 1 : 0) + (globalFilters.department !== 'All' ? 1 : 0) + (globalFilters.dateRange !== 'LTM' ? 1 : 0)} onReset={() => updateGlobalFilters({ region: 'All', department: 'All', dateRange: 'LTM' })}><FilterChip active={globalFilters.region === 'All'} onClick={() => updateGlobalFilters({ region: 'All' })}>All regions</FilterChip>{(['North America', 'EMEA', 'APAC'] as const).map(region => <FilterChip key={region} active={globalFilters.region === region} onClick={() => updateGlobalFilters({ region })}>{region}</FilterChip>)}<select value={globalFilters.department} onChange={event => updateGlobalFilters({ department: event.target.value as any })} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:border-blue-800"><option value="All">All practices</option><option value="Legal Solutions">Legal Solutions</option><option value="Forensics">Forensics</option><option value="Managed Services">Managed Services</option><option value="Data Operations">Data Operations</option></select><select value={globalFilters.dateRange} onChange={event => updateGlobalFilters({ dateRange: event.target.value as any })} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:border-blue-800"><option value="LTM">Last 12 months</option><option value="YTD">Year to date</option><option value="Q3 2026">Q3 2026</option><option value="Q2 2026">Q2 2026</option></select></FilterBar></div>
           {children}
         </main>

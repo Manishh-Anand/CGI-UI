@@ -37,9 +37,13 @@ export const WorkflowRolesView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'workflow' | 'roles' | 'raci'>('workflow');
   const [activeLayer, setActiveLayer] = useState<'System' | 'Business' | 'Application' | 'Data'>('System');
   const [workflowZoom, setWorkflowZoom] = useState(1);
+  const [selectedWorkflowNodeId, setSelectedWorkflowNodeId] = useState('intake');
+  const [expandedRoleId, setExpandedRoleId] = useState<string | null>(selectedRoleId || null);
 
   const currentStage =
     workflowStages.find(s => s.id === activeStageId) || workflowStages[0];
+  const activeWorkflowLayer = UNIFIED_WORKFLOW_LAYERS.find(layer => layer.name.startsWith(activeLayer));
+  const selectedWorkflowNode = activeWorkflowLayer?.nodes.find(node => node.id === selectedWorkflowNodeId) || activeWorkflowLayer?.nodes[0];
 
   return (
     <div className="space-y-6"><DataFreshnessBanner source="Workflow operating model" age="Validated today" />
@@ -75,7 +79,7 @@ export const WorkflowRolesView: React.FC = () => {
         ['Data', 'How signal flows', Layers]
       ].map(([name, copy, Icon]) => { const LayerIcon = Icon as React.ElementType; const isActive = activeLayer === name; return <button key={name as string} className={`premium-card group p-4 text-left transition hover:-translate-y-1 hover:border-blue-200 ${isActive ? 'border-blue-400 bg-blue-50/40 ring-1 ring-blue-200' : ''}`} onClick={() => { setActiveLayer(name as typeof activeLayer); setActiveTab('workflow'); }}><span className="icon-badge"><LayerIcon className="h-4 w-4" /></span><div className="mt-4 text-sm font-semibold text-slate-950">{name as string}</div><div className="mt-1 text-xs text-slate-500">{copy as string}</div><div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-blue-900 transition">{isActive ? 'Layer expanded · inspect below' : 'Explore layer →'}</div></button>; })}</div>
       <div className="premium-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"><div><div className="section-kicker">Active layer</div><div className="mt-2 text-lg font-semibold text-slate-950">{activeLayer} workflow</div><p className="mt-1 text-xs leading-5 text-slate-500">The six delivery stages below are the current eDiscovery subflow. Select a stage to inspect the internal work, owners, tools, and handoffs.</p></div><div className="flex flex-wrap gap-2"><span className="tag tag-blue">6 stages</span><span className="tag bg-slate-100 text-slate-600">RACI linked</span><span className="tag bg-slate-100 text-slate-600">Data lineage ready</span></div></div>
-      <section className="premium-card overflow-hidden"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-4"><div><div className="section-kicker">Interactive workflow orbit</div><div className="mt-1 text-sm font-semibold text-slate-950">Expand the {activeLayer.toLowerCase()} layer</div></div><div className="flex items-center gap-1"><button className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:text-blue-900" onClick={() => setWorkflowZoom(value => Math.min(1.2, value + .1))} title="Zoom in"><ZoomIn className="h-3.5 w-3.5" /></button><button className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:text-blue-900" onClick={() => setWorkflowZoom(value => Math.max(.8, value - .1))} title="Zoom out"><ZoomOut className="h-3.5 w-3.5" /></button><button className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:text-blue-900" onClick={() => setWorkflowZoom(1)} title="Reset canvas"><Maximize2 className="h-3.5 w-3.5" /></button><span className="ml-2 text-[10px] font-bold text-slate-400">{Math.round(workflowZoom * 100)}%</span></div></div><div className="workflow-canvas workflow-orbital p-5" style={{ transform: `scale(${workflowZoom})`, transformOrigin: 'top center' }}><div className="workflow-orbit-core"><Workflow className="h-7 w-7" /><span>{activeLayer}<br /><small>operating layer</small></span></div>{UNIFIED_WORKFLOW_LAYERS.find(layer => layer.name.startsWith(activeLayer))?.nodes.map((node, index) => <React.Fragment key={node.id}><article className={`workflow-node premium-card group p-5 transition hover:-translate-y-1 hover:border-blue-200 workflow-node-${index + 1}`}><div className="flex items-start justify-between gap-3"><div><span className="tag tag-blue">{node.metric}</span><h3 className="mt-4 text-base font-semibold text-slate-950">{node.label}</h3></div><ArrowRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-1 group-hover:text-blue-900" /></div><p className="mt-2 text-sm leading-6 text-slate-600">{node.description}</p><div className="mt-4 flex flex-wrap gap-1.5">{node.tools.map(tool => <span className="tag bg-slate-100 text-slate-600" key={tool}>{tool}</span>)}</div><div className="mt-4 border-t border-slate-100 pt-3"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Owner · {node.owner}</div><div className="mt-2 flex flex-wrap gap-1.5">{node.subflowStages.map(stage => <span className="text-[11px] font-semibold text-blue-900" key={stage}>{stage}</span>)}</div></div></article></React.Fragment>)}</div></section>
+      <section className="premium-card overflow-hidden"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-4"><div><div className="section-kicker">Interactive workflow orbit</div><div className="mt-1 text-sm font-semibold text-slate-950">Click one planet to inspect its sub-workflow</div></div><div className="flex items-center gap-1"><button className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:text-blue-900" onClick={() => setWorkflowZoom(value => Math.min(1.2, value + .1))} title="Zoom in"><ZoomIn className="h-3.5 w-3.5" /></button><button className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:text-blue-900" onClick={() => setWorkflowZoom(value => Math.max(.8, value - .1))} title="Zoom out"><ZoomOut className="h-3.5 w-3.5" /></button><button className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:text-blue-900" onClick={() => setWorkflowZoom(1)} title="Reset canvas"><Maximize2 className="h-3.5 w-3.5" /></button><span className="ml-2 text-[10px] font-bold text-slate-400">{Math.round(workflowZoom * 100)}%</span></div></div><div className="workflow-canvas workflow-orbital p-5" style={{ transform: `scale(${workflowZoom})`, transformOrigin: 'top center' }}><div className="workflow-orbit-core"><Workflow className="h-7 w-7" /><span>{activeLayer}<br /><small>operating layer</small></span></div>{activeWorkflowLayer?.nodes.map((node, index) => <React.Fragment key={node.id}><button type="button" onClick={() => setSelectedWorkflowNodeId(node.id)} className={`workflow-planet group workflow-planet-${index + 1} ${selectedWorkflowNode?.id === node.id ? 'is-selected' : ''}`}><span className="planet-glow" /><span className="tag tag-blue">{node.metric}</span><strong>{node.label}</strong><small>{node.owner}</small></button></React.Fragment>)}{selectedWorkflowNode && <div className="workflow-detail-popover"><div className="section-kicker">Planet detail</div><h3 className="mt-2 text-xl font-semibold text-slate-950">{selectedWorkflowNode.label}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{selectedWorkflowNode.description}</p><div className="mt-4 grid gap-3 sm:grid-cols-3"><div><span>Owner</span><strong>{selectedWorkflowNode.owner}</strong></div><div><span>Tools</span><strong>{selectedWorkflowNode.tools.join(' · ')}</strong></div><div><span>Sub-workflow</span><strong>{selectedWorkflowNode.subflowStages.join(' → ')}</strong></div></div></div>}</div></section>
 
       {/* Top View Selector Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200 text-xs font-medium">
@@ -138,7 +142,7 @@ export const WorkflowRolesView: React.FC = () => {
                   <div
                     key={stage.id}
                     onClick={() => setActiveStageId(stage.id)}
-                    className={`p-3 rounded-lg border cursor-pointer transition-all flex flex-col justify-between relative group ${
+                    className={`stage-card p-4 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between relative group ${
                       isSelected
                         ? 'bg-blue-50/80 border-blue-500 ring-2 ring-blue-500/20 shadow-xs'
                         : 'bg-slate-50/70 border-slate-200 hover:bg-slate-100/80 hover:border-slate-300'
@@ -158,19 +162,19 @@ export const WorkflowRolesView: React.FC = () => {
                         )}
                       </div>
                       <div
-                        className={`font-semibold text-xs leading-snug ${
+                        className={`font-extrabold text-sm leading-snug ${
                           isSelected ? 'text-slate-900' : 'text-slate-700'
                         }`}
                       >
                         {stage.name}
                       </div>
-                      <div className="text-[10px] text-slate-500 line-clamp-2 mt-1">
+                      <div className="mt-2 text-xs font-medium leading-5 text-slate-600 line-clamp-2">
                         {stage.shortDesc}
                       </div>
                     </div>
 
-                    <div className="mt-3 pt-2 border-t border-slate-200/60 text-[10px] text-slate-400 font-medium">
-                      {stage.avgCycleTime}
+                    <div className="mt-4 pt-3 border-t border-slate-200/60 text-[11px] font-bold text-blue-900">
+                      {stage.avgCycleTime} · {stage.throughputMetric}
                     </div>
                   </div>
                 );
@@ -360,14 +364,15 @@ export const WorkflowRolesView: React.FC = () => {
             {roles.map(role => (
               <div
                 key={role.id}
-                className="bg-white rounded-lg border border-slate-200 p-4 shadow-2xs flex flex-col justify-between hover:border-slate-300 transition-colors"
+                onClick={() => setExpandedRoleId(expandedRoleId === role.id ? null : role.id)}
+                className={`bg-white rounded-2xl border p-5 shadow-sm flex flex-col justify-between cursor-pointer transition-all hover:border-blue-300 ${expandedRoleId === role.id ? 'border-blue-400 ring-2 ring-blue-100' : 'border-slate-200'}`}
               >
                 <div>
                   <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
                     <span className="font-bold text-xs text-slate-900">{role.title}</span>
                     <span className="text-[10px] text-slate-500 font-medium">{role.department}</span>
                   </div>
-                  <p className="text-xs text-slate-600 line-clamp-3 mb-3">{role.overview}</p>
+                  <p className="text-sm font-medium leading-6 text-slate-700 line-clamp-2 mb-4">{role.overview}</p>
 
                   <div className="space-y-2 text-xs">
                     <div>
@@ -375,7 +380,7 @@ export const WorkflowRolesView: React.FC = () => {
                         Primary Tools:
                       </span>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {role.primaryTools.map(t => (
+                        {role.primaryTools.slice(0, 2).map(t => (
                           <span
                             key={t}
                             className="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-700"
@@ -383,6 +388,7 @@ export const WorkflowRolesView: React.FC = () => {
                             {t}
                           </span>
                         ))}
+                        {role.primaryTools.length > 2 && <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-50 text-blue-800 font-bold">+{role.primaryTools.length - 2} more</span>}
                       </div>
                     </div>
 
@@ -391,23 +397,26 @@ export const WorkflowRolesView: React.FC = () => {
                         Target KPIs:
                       </span>
                       <div className="mt-1 space-y-0.5 text-[11px] text-slate-700">
-                        {role.kpis.map((kpi, idx) => (
+                        {role.kpis.slice(0, 1).map((kpi, idx) => (
                           <div key={idx} className="flex justify-between">
                             <span className="text-slate-500">{kpi.label}:</span>
                             <span className="font-semibold text-slate-900">{kpi.target}</span>
                           </div>
                         ))}
+                        {role.kpis.length > 1 && <div className="mt-1 text-[10px] font-bold text-blue-700">+{role.kpis.length - 1} KPI targets</div>}
                       </div>
                     </div>
                   </div>
+                  {expandedRoleId === role.id && <div className="mt-4 grid gap-3 border-t border-slate-100 pt-4 text-xs text-slate-600"><div><span className="font-bold uppercase tracking-wider text-slate-400">Responsibilities</span><p className="mt-1 leading-5">{role.responsibilities.slice(0, 3).join(' · ')}</p></div><div><span className="font-bold uppercase tracking-wider text-slate-400">Core skills</span><p className="mt-1 leading-5">{role.coreSkills.slice(0, 4).join(' · ')}</p></div></div>}
                 </div>
 
                 <div className="mt-4 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
                   <span className="text-[10px] text-slate-400">{role.experienceLevel}</span>
                   <button
-                    onClick={() =>
+                    onClick={event => {
+                      event.stopPropagation();
                       openAiSearch(`What are the core responsibilities of a ${role.title}?`)
-                    }
+                    }}
                     className="text-blue-600 hover:text-blue-800 font-semibold text-xs flex items-center gap-1"
                   >
                     <span>Ask AI</span>

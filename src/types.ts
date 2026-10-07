@@ -41,6 +41,9 @@ export interface CompanyLeader {
   title: string;
   biography: string;
   highlights: string[];
+  priorLeadership?: string[];
+  strategicPillars?: string[];
+  leadershipInsights?: string[];
   portraitUrl?: string;
   evidence: DataEvidence;
 }

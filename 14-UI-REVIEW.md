@@ -37,3 +37,18 @@ npm.cmd run build
 ```
 
 Both checks pass. Vite emits only the existing Node `22.11.0` compatibility warning and completes the production build successfully.
+
+## Follow-up interaction pass
+
+- Global scope changes now show an applied-scope confirmation and Client Intelligence applies both region and department scope to its dataset.
+- Every role in the top-right role switcher now produces an observable change: route destination, role-specific workspace context, and confirmation banner.
+- The workflow canvas now uses four positioned planet cards around the active orbit, with a selected-planet detail panel.
+- End-to-end stages use larger bold stage cards with highlighted throughput and cycle-time signals.
+- Role cards summarize tools and KPIs by default and expand to responsibilities and skills on click.
+- Technology orbit labels are clickable, animated with the orbit system, and show an inline signal popover.
+- Andy Macdonald’s About profile now includes the supplied portrait, expanded biography, prior credentials, strategic pillars, and leadership insights.
+- Workflow orbit rendering was corrected by resolving the later `.workflow-canvas` CSS override that was collapsing the orbit viewport to 250px and clipping planet cards.
+- Client Intelligence now has a portfolio pulse hero with a health center, risk/throughput/whitespace signals, and direct attention/full-portfolio actions.
+- Workflow subflows now render as compact planet objects; only the selected planet opens a single arrow-connected detail popover.
+- Technology signal popovers now use four position-aware placements around the clicked orbit signal rather than a fixed center/bottom position.
+- Workflow planets now occupy both outer and inner orbital paths; the single detail popover follows the selected planet and reverses its arrow when the planet is on the right side.

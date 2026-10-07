@@ -27,8 +27,12 @@ const CONSILIO_EVIDENCE = (sourceName: string, sourceUrl: string): { sourceName:
 export const CONSILIO_LEADERSHIP: CompanyLeader = {
   name: 'Andy Macdonald',
   title: 'Chief Executive Officer',
-  biography: 'Andy Macdonald leads Consilio’s strategic and operational initiatives, with more than 20 years of executive experience across technology-enabled services and business building.',
+  biography: 'Andy Macdonald serves as Chief Executive Officer of Consilio, leading global strategy, enterprise operational growth, client engagement, and technological innovation. Under his leadership, Consilio has evolved from an e-discovery pioneer into the world’s leading provider of legal technology, enterprise data, and flexible legal talent solutions.',
   highlights: ['Former First Advantage President & CEO', 'Growth and integration leadership', 'Based in Washington, D.C.'],
+  priorLeadership: ['President & Chief Executive Officer, First Advantage (2003–2011)', 'President & CEO, Employee Health Programs, The First American Corporation', 'Executive leadership across multi-jurisdictional compliance and corporate operations'],
+  strategicPillars: ['Unified global delivery under guaranteed defensible quality SLAs', 'Proprietary software innovation through Sightline and Complete Data with zero third-party software markups', 'Client-first partnership across AmLaw 100 law firms and Fortune 500 corporate legal departments'],
+  leadershipInsights: ['Scale with defensibility: growth is paired with repeatable quality controls and an auditable delivery model.', 'Integrate capability, not just companies: acquisitions are connected into one client-facing operating system.', 'Keep technology close to the client: product innovation is framed around faster, clearer legal decisions.'],
+  portraitUrl: '/src/images/andy_mcdonald_photo.jpg',
   evidence: CONSILIO_EVIDENCE('Consilio Executive Management', 'https://www.consilio.com/about-consilio/executive-management')
 };
 

@@ -132,6 +132,8 @@ export const ClientIntelligenceView: React.FC = () => {
         </button></div>
       </div>
 
+      <section className="client-pulse-panel"><div className="client-pulse-copy"><div className="section-kicker">Portfolio pulse</div><h2>Turn account health into the <em>next best move.</em></h2><p>Use the portfolio signal to focus attention where revenue, service concentration, and competitor exposure intersect.</p><div className="client-pulse-actions"><button className="button-primary" onClick={() => setSelectedStatus('Attention')}>Show attention accounts <ArrowRight className="h-4 w-4" /></button><button className="button-ghost" onClick={() => setSelectedStatus('All')}>View full portfolio</button></div></div><div className="client-pulse-map"><div className="pulse-map-center"><span>Portfolio health</span><strong>{Math.round((clients.filter(client => client.healthScore >= 75).length / Math.max(clients.length, 1)) * 100)}%</strong><small>above healthy threshold</small></div><div className="pulse-ring pulse-ring-one" /><div className="pulse-ring pulse-ring-two" /><div className="pulse-signal pulse-signal-one"><strong>{singleServiceDeclining.length}</strong><span>single-service risk</span></div><div className="pulse-signal pulse-signal-two"><strong>{totalMatters}</strong><span>active matters</span></div><div className="pulse-signal pulse-signal-three"><strong>${(clients.reduce((sum, client) => sum + (client.whitespaceOpportunity ? 1 : 0), 0) * 1.4).toFixed(1)}M</strong><span>whitespace signal</span></div></div></section>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-white p-4 rounded-lg border border-slate-200 shadow-2xs">
