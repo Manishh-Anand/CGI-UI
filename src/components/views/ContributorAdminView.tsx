@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { IntelligenceArea } from '../../types';
+import { FilterBar, FilterChip, HelpButton, Freshness } from '../ui/PageChrome';
 
 export const ContributorAdminView: React.FC = () => {
   const {
@@ -28,6 +29,7 @@ export const ContributorAdminView: React.FC = () => {
   const [newSummary, setNewSummary] = useState('');
   const [newChanges, setNewChanges] = useState('');
   const [feedbackNotice, setFeedbackNotice] = useState<string | null>(null);
+  const [queueFilter, setQueueFilter] = useState<'All' | 'Pending Approval' | 'Approved' | 'Rejected'>('All');
 
   const isAdminView = activeView === 'admin-approvals' || activeRole === 'Admin';
 
@@ -50,8 +52,9 @@ export const ContributorAdminView: React.FC = () => {
     setTimeout(() => setFeedbackNotice(null), 4000);
   };
 
-  const pendingSubmissions = contributorSubmissions.filter(s => s.status === 'Pending Approval');
-  const resolvedSubmissions = contributorSubmissions.filter(s => s.status !== 'Pending Approval');
+  const visibleSubmissions = contributorSubmissions.filter(s => queueFilter === 'All' || s.status === queueFilter);
+  const pendingSubmissions = visibleSubmissions.filter(s => s.status === 'Pending Approval');
+  const resolvedSubmissions = visibleSubmissions.filter(s => s.status !== 'Pending Approval');
 
   return (
     <div className="space-y-6">
@@ -70,14 +73,16 @@ export const ContributorAdminView: React.FC = () => {
           </p>
         </div>
 
-        <button
+        <div className="flex items-center gap-2"><HelpButton title="How governance works" body="Proposals move through Draft, Pending Approval, Approved, or Rejected. Admins and Management can resolve pending changes; contributors can submit evidence-backed updates." /><button
           onClick={() => setIsSubmitModalOpen(true)}
           className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors shadow-2xs self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
           <span>Propose Intelligence Update</span>
-        </button>
+        </button></div>
       </div>
+
+      <FilterBar label="Governance queue" count={contributorSubmissions.length} onReset={() => setQueueFilter('All')}><FilterChip active={queueFilter === 'All'} onClick={() => setQueueFilter('All')}>All</FilterChip><FilterChip active={queueFilter === 'Pending Approval'} onClick={() => setQueueFilter('Pending Approval')}>Pending</FilterChip><FilterChip active={queueFilter === 'Approved'} onClick={() => setQueueFilter('Approved')}>Approved</FilterChip><FilterChip active={queueFilter === 'Rejected'} onClick={() => setQueueFilter('Rejected')}>Rejected</FilterChip><Freshness label="Queue synced today" /></FilterBar>
 
       {/* Temporary feedback banner */}
       {feedbackNotice && (

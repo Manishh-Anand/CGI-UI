@@ -332,10 +332,10 @@ The work is intentionally limited to four phases. Each phase ends with a usable,
 ### Live implementation status
 
 - **Branch:** `codex-ui-wow`
-- **Phase 1:** In progress / foundation implemented and build-validated.
-- **Phase 2:** In progress / About Consilio, renamed Market Intelligence labels, client risk badge, and technology rebuild implemented.
-- **Phase 3:** In progress / unified workflow framing and Solution 360 — Product Atlas framing implemented; deeper layer/subflow data modeling remains.
-- **Phase 4:** In progress / learning redirect/completion treatment and browser-microphone mock entry implemented; full assessment recommendation persistence and four explicit voice-flow states remain.
+- **Phase 1:** Accepted / foundation implemented and build-validated.
+- **Phase 2:** Ready for QA / About Consilio, renamed Market Intelligence labels, client risk logic, shared table controls, brand marks, and technology rebuild implemented.
+- **Phase 3:** Ready for QA / unified four-layer workflow data model and subflow canvas implemented; Solution 360 — Product Atlas framing, metrics, filters, and product inspection implemented.
+- **Phase 4:** Ready for QA / learning Atlas redirects/completion, assessment dashboard/navigation/results recommendations, governance queue filters, and browser-microphone mock flows implemented.
 
 ### Phase 1 — Foundation, information architecture, and design system
 
