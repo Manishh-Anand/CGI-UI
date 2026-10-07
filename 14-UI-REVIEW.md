@@ -52,3 +52,4 @@ Both checks pass. Vite emits only the existing Node `22.11.0` compatibility warn
 - Workflow subflows now render as compact planet objects; only the selected planet opens a single arrow-connected detail popover.
 - Technology signal popovers now use four position-aware placements around the clicked orbit signal rather than a fixed center/bottom position.
 - Workflow planets now occupy both outer and inner orbital paths; the single detail popover follows the selected planet and reverses its arrow when the planet is on the right side.
+- The attached workflow redesign brief is now implemented through the reusable `WorkflowOrbit` component: the six delivery stages are mathematically placed planets around a central workflow sun, connection lines highlight the selected stage, the contextual inspector is position-aware, and mobile uses a compact stacked fallback.

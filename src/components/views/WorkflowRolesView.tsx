@@ -2,24 +2,17 @@ import React, { useState } from 'react';
 import {
   Workflow,
   Users,
-  Clock,
   ArrowRight,
-  ChevronDown,
   ChevronRight,
   ShieldAlert,
   Wrench,
-  CheckCircle,
-  Briefcase,
   Sparkles,
-  Layers,
-  ArrowDown
-  ,ZoomIn, ZoomOut, Maximize2
+  Layers
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { WorkflowStage, RoleRecord } from '../../types';
-import { UNIFIED_WORKFLOW_LAYERS } from '../../data/mockData';
 import { DataFreshnessBanner, HelpButton } from '../ui/PageChrome';
 import { DataTableTools } from '../ui/DataTableTools';
+import { WorkflowOrbit } from './WorkflowOrbit';
 
 export const WorkflowRolesView: React.FC = () => {
   const {
@@ -35,16 +28,10 @@ export const WorkflowRolesView: React.FC = () => {
     selectedWorkflowStageId || 'stage-5'
   );
   const [activeTab, setActiveTab] = useState<'workflow' | 'roles' | 'raci'>('workflow');
-  const [activeLayer, setActiveLayer] = useState<'System' | 'Business' | 'Application' | 'Data'>('System');
-  const [workflowZoom, setWorkflowZoom] = useState(1);
-  const [selectedWorkflowNodeId, setSelectedWorkflowNodeId] = useState('intake');
   const [expandedRoleId, setExpandedRoleId] = useState<string | null>(selectedRoleId || null);
 
   const currentStage =
     workflowStages.find(s => s.id === activeStageId) || workflowStages[0];
-  const activeWorkflowLayer = UNIFIED_WORKFLOW_LAYERS.find(layer => layer.name.startsWith(activeLayer));
-  const selectedWorkflowNode = activeWorkflowLayer?.nodes.find(node => node.id === selectedWorkflowNodeId) || activeWorkflowLayer?.nodes[0];
-
   return (
     <div className="space-y-6"><DataFreshnessBanner source="Workflow operating model" age="Validated today" />
       {/* Header */}
@@ -72,14 +59,7 @@ export const WorkflowRolesView: React.FC = () => {
         </button></div>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-4">{[
-        ['System', 'How work gets done', Workflow],
-        ['Business', 'How value moves', Briefcase],
-        ['Application', 'Where work happens', Wrench],
-        ['Data', 'How signal flows', Layers]
-      ].map(([name, copy, Icon]) => { const LayerIcon = Icon as React.ElementType; const isActive = activeLayer === name; return <button key={name as string} className={`premium-card group p-4 text-left transition hover:-translate-y-1 hover:border-blue-200 ${isActive ? 'border-blue-400 bg-blue-50/40 ring-1 ring-blue-200' : ''}`} onClick={() => { setActiveLayer(name as typeof activeLayer); setActiveTab('workflow'); }}><span className="icon-badge"><LayerIcon className="h-4 w-4" /></span><div className="mt-4 text-sm font-semibold text-slate-950">{name as string}</div><div className="mt-1 text-xs text-slate-500">{copy as string}</div><div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-blue-900 transition">{isActive ? 'Layer expanded · inspect below' : 'Explore layer →'}</div></button>; })}</div>
-      <div className="premium-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"><div><div className="section-kicker">Active layer</div><div className="mt-2 text-lg font-semibold text-slate-950">{activeLayer} workflow</div><p className="mt-1 text-xs leading-5 text-slate-500">The six delivery stages below are the current eDiscovery subflow. Select a stage to inspect the internal work, owners, tools, and handoffs.</p></div><div className="flex flex-wrap gap-2"><span className="tag tag-blue">6 stages</span><span className="tag bg-slate-100 text-slate-600">RACI linked</span><span className="tag bg-slate-100 text-slate-600">Data lineage ready</span></div></div>
-      <section className="premium-card overflow-hidden"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-4"><div><div className="section-kicker">Interactive workflow orbit</div><div className="mt-1 text-sm font-semibold text-slate-950">Click one planet to inspect its sub-workflow</div></div><div className="flex items-center gap-1"><button className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:text-blue-900" onClick={() => setWorkflowZoom(value => Math.min(1.2, value + .1))} title="Zoom in"><ZoomIn className="h-3.5 w-3.5" /></button><button className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:text-blue-900" onClick={() => setWorkflowZoom(value => Math.max(.8, value - .1))} title="Zoom out"><ZoomOut className="h-3.5 w-3.5" /></button><button className="rounded-lg border border-slate-200 p-2 text-slate-600 hover:text-blue-900" onClick={() => setWorkflowZoom(1)} title="Reset canvas"><Maximize2 className="h-3.5 w-3.5" /></button><span className="ml-2 text-[10px] font-bold text-slate-400">{Math.round(workflowZoom * 100)}%</span></div></div><div className="workflow-canvas workflow-orbital p-5" style={{ transform: `scale(${workflowZoom})`, transformOrigin: 'top center' }}><div className="workflow-orbit-core"><Workflow className="h-7 w-7" /><span>{activeLayer}<br /><small>operating layer</small></span></div>{activeWorkflowLayer?.nodes.map((node, index) => <React.Fragment key={node.id}><button type="button" onClick={() => setSelectedWorkflowNodeId(node.id)} className={`workflow-planet group workflow-planet-${index + 1} ${selectedWorkflowNode?.id === node.id ? 'is-selected' : ''}`}><span className="planet-glow" /><span className="tag tag-blue">{node.metric}</span><strong>{node.label}</strong><small>{node.owner}</small></button></React.Fragment>)}{selectedWorkflowNode && <div className="workflow-detail-popover"><div className="section-kicker">Planet detail</div><h3 className="mt-2 text-xl font-semibold text-slate-950">{selectedWorkflowNode.label}</h3><p className="mt-2 text-sm leading-6 text-slate-600">{selectedWorkflowNode.description}</p><div className="mt-4 grid gap-3 sm:grid-cols-3"><div><span>Owner</span><strong>{selectedWorkflowNode.owner}</strong></div><div><span>Tools</span><strong>{selectedWorkflowNode.tools.join(' · ')}</strong></div><div><span>Sub-workflow</span><strong>{selectedWorkflowNode.subflowStages.join(' → ')}</strong></div></div></div>}</div></section>
+      <WorkflowOrbit stages={workflowStages} activeStageId={activeStageId} onStageChange={setActiveStageId} />
 
       {/* Top View Selector Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200 text-xs font-medium">
