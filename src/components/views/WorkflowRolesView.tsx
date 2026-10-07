@@ -59,7 +59,7 @@ export const WorkflowRolesView: React.FC = () => {
         </button></div>
       </div>
 
-      <WorkflowOrbit stages={workflowStages} activeStageId={activeStageId} onStageChange={setActiveStageId} />
+      <WorkflowOrbit />
 
       {/* Top View Selector Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200 text-xs font-medium">
