@@ -1,0 +1,22 @@
+{
+  "llm": {
+    "base_url": "http://localhost:8082/v1",
+    "model": "qwen3-4b",
+    "temperature": 0.3,
+    "max_tokens": 640
+  },
+  "embed": {
+    "base_url": "http://localhost:8081/v1",
+    "model": "Qwen3-Embedding-0.6B-Q8_0.gguf"
+  },
+  "retrieval": {
+    "top_k": 6,
+    "min_score": 0.50,
+    "chunk_words": 170,
+    "overlap_words": 25
+  },
+  "db": "data/chatprototype.sqlite",
+  "port": 8000,
+  "corpus": "corpus",
+  "disclaimer": "Synthetic sample data for the PoC — not actual company information."
+}

@@ -1,0 +1,28 @@
+{
+  "competitors": [
+    {"name": "Aurelian Discovery", "revenue_usd": 86000000, "employees": 1200, "focus": "full-service, banking", "founded": 2009},
+    {"name": "Verita Processing Co", "revenue_usd": 54000000, "employees": 700, "focus": "volume processing", "founded": 2012},
+    {"name": "Lattice eDiscovery", "revenue_usd": 32000000, "employees": 450, "focus": "TAR analytics", "founded": 2015},
+    {"name": "MeridianGrid", "revenue_usd": 19000000, "employees": 210, "focus": "cloud and chat collection", "founded": 2019},
+    {"name": "FirstPoint Legal Tech", "revenue_usd": 8000000, "employees": 90, "focus": "privilege boutique", "founded": 2017}
+  ],
+  "clients": [
+    {"name": "Meridian Bank Group", "sector": "banking", "matters": 6, "arr_usd": 4200000},
+    {"name": "Caldwell & Price LLP", "sector": "legal", "matters": 14, "arr_usd": 2100000},
+    {"name": "Northwind Holdings", "sector": "corporate", "matters": 5, "arr_usd": 980000},
+    {"name": "Halcyon Assurance", "sector": "financial services", "matters": 4, "arr_usd": 740000},
+    {"name": "Defence Procurement Office", "sector": "government", "matters": 3, "arr_usd": 820000},
+    {"name": "Vertex Industrial Group", "sector": "corporate", "matters": 7, "arr_usd": 1230000},
+    {"name": "Straitsline Bank", "sector": "banking", "matters": 3, "arr_usd": 1560000},
+    {"name": "Beacon & Marsh LLP", "sector": "legal", "matters": 9, "arr_usd": 1340000}
+  ],
+  "deadlines": [
+    {"matter": "Meridian Bank regulatory response", "milestone": "Production Tranche A", "due": "2026-10-12", "status": "in progress", "risk": "high"},
+    {"matter": "Vertex trade dispute", "milestone": "Review completion", "due": "2026-10-22", "status": "in progress", "risk": "medium"},
+    {"matter": "Northwind M&A", "milestone": "Production delivery", "due": "2026-10-28", "status": "on track", "risk": "low"},
+    {"matter": "Halcyon renewal", "milestone": "Collection plan sign-off", "due": "2026-10-14", "status": "pending", "risk": "medium"},
+    {"matter": "Straitsline regulatory matter", "milestone": "Processing complete", "due": "2026-11-02", "status": "on track", "risk": "low"},
+    {"matter": "Meridian supplementary production", "milestone": "Production Tranche B", "due": "2026-11-09", "status": "planning", "risk": "low"},
+    {"matter": "Defence Procurement forensic engagement", "milestone": "Forensic report delivery", "due": "2026-11-15", "status": "on track", "risk": "low"}
+  ]
+}

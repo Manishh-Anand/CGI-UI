@@ -1,0 +1,5 @@
+# Offline import for the embedding model (no registry access needed).
+# Usage: copy Qwen3-Embedding-0.6B-Q8_0.gguf into this folder, then:
+#   ollama create qwen3-embedding-local -f Modelfile-embedding.example
+# and set "model": "qwen3-embedding-local" under "embed" in config.json.
+FROM ./Qwen3-Embedding-0.6B-Q8_0.gguf

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consilio Intelligence Gateway — PoC</title>
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --panel2: #1c2330; --border: #2e3a4d;
+    --text: #e6edf3; --muted: #8b98a9; --accent: #4da3ff; --accent2: #58a6ff;
+    --green: #3fb950; --amber: #d29922; --red: #f85149; --purple: #a371f7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text);
+         font: 15px/1.55 "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 18px 16px 90px; }
+
+  header { display: flex; align-items: center; justify-content: space-between;
+           gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  header h1 { font-size: 18px; font-weight: 600; }
+  header h1 span { color: var(--accent2); }
+  .status { font-size: 12px; color: var(--muted); text-align: right; }
+  .status b { color: var(--green); }
+
+  .banner { background: #3a2f0a; border: 1px solid var(--amber); color: #e8c877;
+            font-size: 12.5px; padding: 7px 12px; border-radius: 8px; margin-bottom: 14px; }
+
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .chip { background: var(--panel2); border: 1px solid var(--border); color: var(--text);
+          font-size: 12.5px; padding: 6px 11px; border-radius: 999px; cursor: pointer; }
+  .chip:hover { border-color: var(--accent); color: var(--accent2); }
+
+  #log { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+  .row { display: flex; }
+  .row.user { justify-content: flex-end; }
+  .bubble { max-width: 86%; padding: 11px 14px; border-radius: 14px; }
+  .row.user .bubble { background: #1f3a5f; border: 1px solid #2d5387; }
+  .row.bot .bubble { background: var(--panel); border: 1px solid var(--border); width: 100%; }
+
+  .mode { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .02em;
+          padding: 2px 8px; border-radius: 999px; margin-bottom: 8px; }
+  .mode.rag { background: #0f2b18; color: var(--green); border: 1px solid #1f4633; }
+  .mode.relational { background: #1d1740; color: var(--purple); border: 1px solid #3a2f6b; }
+  .mode.insufficient { background: #3a2f0a; color: var(--amber); border: 1px solid #59450c; }
+
+  .answer { white-space: pre-wrap; word-wrap: break-word; }
+  .answer p { margin: 0 0 6px; }
+  .answer b { color: #fff; }
+  .cite { color: var(--accent2); font-size: 11px; font-weight: 700; cursor: pointer;
+          text-decoration: none; }
+
+  .sources { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border);
+             display: flex; flex-direction: column; gap: 6px; }
+  .src { font-size: 12.5px; color: var(--muted); }
+  .src .t { color: var(--text); font-weight: 600; }
+  .src .dim { color: var(--accent2); font-size: 11px; }
+  .src .score { color: var(--muted); }
+  details.snippet { font-size: 12px; color: var(--muted); }
+  details.snippet summary { cursor: pointer; color: var(--accent2); }
+
+  .meta { margin-top: 10px; font-size: 11.5px; color: var(--muted); opacity: .8; }
+
+  .thinking { color: var(--muted); font-size: 13px; padding: 6px 2px; }
+  .dot { animation: blink 1.2s infinite; } .dot:nth-child(2){animation-delay:.2s}
+  .dot:nth-child(3){animation-delay:.4s}
+  @keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }
+
+  .inputbar { position: fixed; bottom: 0; left: 0; right: 0; background: linear-gradient(
+      transparent, var(--bg) 30%); padding: 12px 16px 18px; }
+  .inner { max-width: 880px; margin: 0 auto; display: flex; gap: 10px; }
+  #q { flex: 1; background: var(--panel); border: 1px solid var(--border); color: var(--text);
+       border-radius: 12px; padding: 12px 14px; font-size: 14.5px; outline: none; }
+  #q:focus { border-color: var(--accent); }
+  #go { background: var(--accent); color: #04121f; border: 0; border-radius: 12px;
+        padding: 0 20px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  #go:disabled { opacity: .5; cursor: default; }
+  .foot { max-width: 880px; margin: 6px auto 0; font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Consilio Intelligence Gateway — <span>PoC chat</span></h1>
+    <div class="status">LLM: <b id="s-llm">…</b><br>Embeddings: <span id="s-embed">…</span></div>
+  </header>
+  <div class="banner" id="banner">Synthetic sample data — this is a proof of concept, not actual company information.</div>
+
+  <div class="chips" id="chips"></div>
+  <div id="log"></div>
+</div>
+
+<div class="inputbar">
+  <div class="inner">
+    <input id="q" placeholder="Ask the knowledge base…" autocomplete="off">
+    <button id="go">Ask</button>
+  </div>
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+const SUGGESTIONS = [
+  "Who are our top competitors by revenue?",
+  "Describe the eDiscovery workflow step by step.",
+  "What did we deliver on Matter Meridian?",
+  "How are we organised into departments?",
+  "Which deadlines are due in the next 30 days?",
+  "What is the stock price of Consilio today?"
+];
+
+function esc(s){
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function renderInline(s){
+  s = esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+  return s.replace(/\[(\d{1,2})\]/g, '<a class="cite" data-n="$1">[$1]</a>');
+}
+
+const logEl = document.getElementById("log");
+function addRow(kind, html){
+  const row = document.createElement("div");
+  row.className = "row " + kind;
+  const b = document.createElement("div");
+  b.className = "bubble";
+  b.innerHTML = html;
+  row.appendChild(b);
+  logEl.appendChild(row);
+  logEl.scrollTop = logEl.scrollHeight;
+  return b;
+}
+
+// Welcome message on load
+function showWelcome(){
+  addRow("bot", '<span class="mode rag">KNOWLEDGE-BASE RAG</span><div class="answer">Welcome — how can I help you?</div>');
+}
+showWelcome();
+
+function showSources(bubble, sources){
+  if(!sources || !sources.length) return;
+  const w = document.createElement("div");
+  w.className = "sources";
+  let i = 1;
+  for(const s of sources){
+    const d = document.createElement("div");
+    d.className = "src";
+    d.innerHTML = `<span class="t">[${i}] ${esc(s.title)}</span> · ` +
+                  `<span class="dim">${esc(s.dimension)}</span> · ` +
+                  `<span class="score">${(s.score*100).toFixed(0)}%</span>`;
+    if(s.snippet){
+      const det = document.createElement("details");
+      det.className = "snippet";
+      det.innerHTML = `<summary>snippet</summary><div>${esc(s.snippet)}…</div>`;
+      d.appendChild(det);
+    }
+    w.appendChild(d);
+    i++;
+  }
+  bubble.appendChild(w);
+}
+
+function modeBadge(mode){
+  if(mode === "rag") return '<span class="mode rag">KNOWLEDGE-BASE RAG</span>';
+  if(mode === "relational") return '<span class="mode relational">DIRECT DATA QUERY</span>';
+  return '<span class="mode insufficient">EVIDENCE INSUFFICIENT</span>';
+}
+
+async function ask(question){
+  const q = document.getElementById("q");
+  q.value = "";
+  addRow("user", renderInline(question));
+  const think = addRow("bot", '<span class="thinking">Retrieving context<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>');
+
+  let r;
+  try{
+    r = await fetch("/api/chat", { method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ question }) });
+  }catch(e){
+    think.remove();
+    addRow("bot", modeBadge("insufficient") + '<div class="answer">Cannot reach the local server.</div>');
+    return;
+  }
+  const data = await r.json().catch(()=>({error:"bad response"}));
+  if(data.error){
+    think.remove();
+    addRow("bot", modeBadge("insufficient") + `<div class="answer">Server error: ${esc(data.error)}</div>`);
+    return;
+  }
+
+  think.innerHTML = modeBadge(data.mode) + `<div class="answer">${renderInline(data.answer)}</div>`;
+  if(data.mode === "rag") showSources(think, data.sources);
+  if(data.mode === "relational"){
+    const s = document.createElement("div");
+    s.className = "sources";
+    for(const src of data.sources){
+      const d = document.createElement("div");
+      d.className = "src";
+      d.innerHTML = `<span class="t">[1] ${esc(src.title)}</span> · <span class="dim">${esc(src.dimension)}</span> · structured store`;
+      s.appendChild(d);
+    }
+    think.appendChild(s);
+  }
+  if(data.mode === "insufficient") showSources(think, data.sources);
+
+  const meta = document.createElement("div");
+  meta.className = "meta";
+  meta.textContent = `${data.total_seconds}s total · prompt ${data.usage.prompt} / completion ${data.usage.completion} tokens · ${data.model}`;
+  think.appendChild(meta);
+}
+
+function send(){
+  const q = document.getElementById("q");
+  const text = q.value.trim();
+  if(!text) return;
+  const go = document.getElementById("go");
+  go.disabled = true;
+  ask(text).finally(()=>{ go.disabled = false; q.focus(); });
+}
+
+document.getElementById("go").addEventListener("click", send);
+document.getElementById("q").addEventListener("keydown", e=>{ if(e.key==="Enter") send(); });
+document.getElementById("log").addEventListener("click", e=>{
+  const t = e.target;
+  if(t.classList && t.classList.contains("cite")){
+    const idx = parseInt(t.dataset.n, 10);
+    const srcs = t.closest(".bubble")?.querySelectorAll(".src");
+    if(srcs && idx <= srcs.length){
+      const det = srcs[idx-1].querySelector("details");
+      if(det){ det.open = !det.open; } 
+    }
+  }
+});
+
+const chips = document.getElementById("chips");
+SUGGESTIONS.forEach(s=>{
+  const c = document.createElement("button");
+  c.className = "chip";
+  c.textContent = s;
+  c.addEventListener("click", ()=>{ document.getElementById("q").value = s; send(); });
+  chips.appendChild(c);
+});
+
+fetch("/health").then(r=>r.json()).then(h=>{
+  document.getElementById("s-llm").textContent = h.llm;
+  document.getElementById("s-embed").textContent = h.embed;
+  document.getElementById("banner").textContent = h.disclaimer || "Synthetic sample data — proof of concept, not actual company information.";
+}).catch(()=>{ document.getElementById("s-llm").textContent = "offline"; });
+</script>
+</body>
+</html>
